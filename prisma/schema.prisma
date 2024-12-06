@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id             Int      @id @default(autoincrement())
+  code           String   // รหัสเซลล์
+  team           String
+  customerGroup  String
+  customerName   String
+  price          String   // ใช้ String สำหรับราคา
+  dailyQuantities Json     // ข้อมูล JSON สำหรับจำนวนปลาแต่ละวัน
+  fishSize       String
+  fishType       String
+  createdAt      DateTime @default(now())
+}
