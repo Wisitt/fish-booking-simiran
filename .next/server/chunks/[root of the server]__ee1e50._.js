@@ -63,14 +63,27 @@ var __TURBOPACK__imported__module__$5b$externals$5d2f$__$5b$external$5d$__$2840$
 ;
 ;
 const prisma = new __TURBOPACK__imported__module__$5b$externals$5d2f$__$5b$external$5d$__$2840$prisma$2f$client$2c$__cjs$29$__["PrismaClient"]();
-async function GET() {
+async function GET(req) {
+    const userId = req.headers.get("userId"); // Get userId from request headers
+    if (!userId) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            message: "User ID is required"
+        }, {
+            status: 400
+        });
+    }
     try {
-        const bookings = await prisma.booking.findMany();
+        // Query bookings where userId matches
+        const bookings = await prisma.booking.findMany({
+            where: {
+                userId: parseInt(userId)
+            }
+        });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(bookings);
     } catch (error) {
         console.error("Error fetching bookings:", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Failed to fetch bookings"
+            message: "Error fetching bookings"
         }, {
             status: 500
         });
@@ -79,13 +92,16 @@ async function GET() {
 async function POST(req) {
     try {
         const body = await req.json();
-        if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.dailyQuantities) {
+        // Validate required fields
+        if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.dailyQuantities || !body.userId // Ensure userId is provided
+        ) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
                 error: "Missing or invalid required fields"
             }, {
                 status: 400
             });
         }
+        // Create the booking
         const booking = await prisma.booking.create({
             data: {
                 code: body.code,
@@ -95,7 +111,8 @@ async function POST(req) {
                 fishSize: body.fishSize,
                 fishType: body.fishType,
                 price: body.price,
-                dailyQuantities: body.dailyQuantities
+                dailyQuantities: body.dailyQuantities,
+                userId: body.userId
             }
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(booking, {

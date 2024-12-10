@@ -1,9 +1,8 @@
-// app/bookings/page.tsx
+// app/booking/page.tsx 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BookingForm from "../components/BookingForm";
-import SummaryTable from "../components/SummaryTable";
 
 interface Booking {
   id: number;
@@ -16,7 +15,6 @@ interface Booking {
   fishSize: string;
   fishType: string;
 }
-const SECRET_CODES = ["edok", "dogfuse", "wisit"];
 
 const BookingPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -25,21 +23,37 @@ const BookingPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [code, setCode] = useState("");
 
+  const firstInputRef = useRef<HTMLInputElement | null>(null); // Create ref for the first input
+
   useEffect(() => {
     const fetchBookings = async () => {
-      try {
-        const response = await fetch("/api/bookings");
-        if (!response.ok) throw new Error("Failed to fetch bookings");
-
-        const data: Booking[] = await response.json();
-        setBookings(data);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
+      const userId = localStorage.getItem("userId"); // Get userId from localStorage
+      if (!userId) {
+        alert("User not logged in.");
+        return;
       }
+  
+      const response = await fetch("/api/bookings", {
+        method: "GET",
+        headers: {
+          "email": "",
+          "role": "user", // Set role
+          "userId": userId, // Pass userId in the header or body to the API
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      setBookings(data); // Set bookings data to state
     };
-
+  
     fetchBookings();
   }, []);
+  
+  
 
   const handleDelete = async (id: number) => {
     setDeletingBooking(bookings.find((booking) => booking.id === id) || null);
@@ -56,14 +70,14 @@ const BookingPage = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (SECRET_CODES.includes(code) && deletingBooking) {
+    if (code === "edok" || code === "dogfuse" || code === "wisit") {
       try {
-        const response = await fetch(`/api/bookings?id=${deletingBooking.id}&code=${code}`, {
+        const response = await fetch(`/api/bookings?id=${deletingBooking?.id}&code=${code}`, {
           method: "DELETE",
         });
 
         if (response.ok) {
-          setBookings(bookings.filter((booking) => booking.id !== deletingBooking.id));
+          setBookings(bookings.filter((booking) => booking.id !== deletingBooking?.id));
           alert("Booking deleted successfully!");
         } else {
           alert("Invalid code. Deletion not authorized.");
@@ -87,68 +101,70 @@ const BookingPage = () => {
     setEditingBooking(null);
   };
 
-  const downloadExcel = async () => {
-    try {
-      const response = await fetch("/api/export/excel");
-      if (!response.ok) throw new Error("Failed to download file");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "Fish_Booking_Report.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading Excel:", error);
-      alert("Failed to download Excel file.");
-    }
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center text-blue-600">
-        Fish Booking System
-      </h1>
+    <div className="container mx-auto px-6 py-8">
+      <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">Fish Booking System</h1>
 
       <BookingForm
         setBookings={setBookings}
         editingBooking={editingBooking}
         clearEditingBooking={clearEditingBooking}
+        firstInputRef={firstInputRef} // Pass ref to the form
       />
 
-      <h2 className="text-2xl font-semibold mt-10 mb-4 text-blue-500">
-        All Bookings
-      </h2>
-      <ul className="space-y-4">
+      <h2 className="text-2xl font-semibold mt-10 mb-4 text-blue-500">Your Bookings</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bookings.map((booking) => (
-          <li key={booking.id} className="border p-4 rounded-lg shadow-md bg-gray-50 flex flex-col space-y-4">
-            <div className="font-bold text-lg text-blue-700">Code: {booking.code}</div>
-            <div className="font-bold text-lg text-blue-700">Team: {booking.team}</div>
-            <div className="text-gray-600">Customer: {booking.customerName}</div>
-            <div className="text-gray-600">Fish Size: {booking.fishSize}</div>
-            <div className="text-gray-600">Fish Type: {booking.fishType}</div>
-            <div className="text-gray-600">Price: {booking.price} THB</div>
-            <div className="text-gray-600">Daily Quantities:</div>
-            <ul>
-              {Object.entries(booking.dailyQuantities).map(([day, qty]) => (
-                <li key={day}>
-                  {day}: {qty} fish
-                </li>
-              ))}
-            </ul>
-            <div className="flex space-x-4 mt-4">
-              <button onClick={() => handleEdit(booking)} className="bg-yellow-500 text-white px-4 py-2 rounded">
+          <div
+            key={booking.id}
+            className="border p-4 rounded-lg shadow-md bg-gray-50 flex flex-col space-y-4"
+          >
+            <div className="font-bold text-lg text-blue-700">{booking.code}</div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Team:</span> {booking.team}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Customer Group:</span> {booking.customerGroup}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Customer:</span> {booking.customerName}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Fish Size:</span> {booking.fishSize}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Fish Type:</span> {booking.fishType}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Price:</span> {booking.price} THB
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Daily Quantities:</span>
+              <ul>
+                {Object.entries(booking.dailyQuantities).map(([day, qty]) => (
+                  <li key={day}>
+                    {day}: {qty} fish
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex justify-between space-x-4 mt-4">
+              <button
+                onClick={() => handleEdit(booking)}
+                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300"
+              >
                 Edit
               </button>
-              <button onClick={() => handleDelete(booking.id)} className="bg-red-500 text-white px-4 py-2 rounded">
+              <button
+                onClick={() => handleDelete(booking.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+              >
                 Delete
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
@@ -161,19 +177,19 @@ const BookingPage = () => {
               value={code}
               onChange={handleCodeChange}
               placeholder="Enter code"
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+              className="w-full p-3 border border-gray-300 rounded-md mb-4"
             />
 
             <div className="flex justify-between space-x-4">
               <button
                 onClick={handleConfirmDelete}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+                className="w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none transition duration-300"
               >
                 Confirm
               </button>
               <button
                 onClick={handleCloseModal}
-                className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none"
+                className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-md hover:bg-gray-400 focus:outline-none transition duration-300"
               >
                 Cancel
               </button>
@@ -181,11 +197,6 @@ const BookingPage = () => {
           </div>
         </div>
       )}
-
-      <SummaryTable />
-      <button onClick={downloadExcel} className="bg-green-500 text-white px-4 py-2 rounded">
-        Export to Excel
-      </button>
     </div>
   );
 };

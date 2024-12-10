@@ -32,18 +32,20 @@ interface BookingFormProps {
   setBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
   editingBooking?: Booking | null;
   clearEditingBooking?: () => void;
+  firstInputRef: React.RefObject<HTMLInputElement>;  // Add this prop
+
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
   setBookings,
   editingBooking,
   clearEditingBooking,
+  firstInputRef,
 }) => {
   const getWeekDays = (): string[] => {
     const startDate = new Date();
     const days: string[] = [];
 
-    // Get Monday to Saturday of the current week
     for (let i = 1; i <= 6; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + (i - startDate.getDay()));
@@ -78,6 +80,9 @@ const BookingForm: React.FC<BookingFormProps> = ({
   useEffect(() => {
     if (editingBooking) {
       setFormData(editingBooking); // Load data for editing
+      if (firstInputRef.current) {
+        firstInputRef.current.focus();
+      }
     } else {
       const weekDays = getWeekDays(); // Get the days of the current week
       setFormData({
@@ -112,7 +117,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    // Validate that all required fields are filled
     if (
       !formData.code ||
       !formData.team ||
@@ -124,24 +130,38 @@ const BookingForm: React.FC<BookingFormProps> = ({
       alert("Please fill in all required fields.");
       return;
     }
-
+  
     try {
       const method = editingBooking ? "PUT" : "POST";
       const url = editingBooking ? `/api/bookings/${editingBooking.id}` : "/api/bookings";
-
+  
+      // Ensure userId is retrieved from localStorage
+      const userId = localStorage.getItem("userId");
+  
+      if (!userId) {
+        alert("User is not logged in.");
+        return;
+      }
+  
+      // Log the data to check if everything is correct
+      console.log("Form data being submitted:", { ...formData, userId });
+  
+      // Make the API request
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, userId: parseInt(userId) }), // Pass userId correctly
       });
-
+  
+      const data = await response.json();
+  
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Unknown server error" }));
-        throw new Error(errorData.error || "Failed to save booking");
+        throw new Error(data.error || "Failed to save booking");
       }
-
-      const updatedBooking = await response.json();
-
+  
+      // Handle the response after saving the booking
+      const updatedBooking = data;
+  
       if (editingBooking) {
         setBookings((prev) =>
           prev.map((booking) =>
@@ -153,123 +173,138 @@ const BookingForm: React.FC<BookingFormProps> = ({
         setBookings((prev) => [...prev, updatedBooking]);
         alert("Booking saved!");
       }
-
+  
       clearEditingBooking?.();
     } catch (error) {
       console.error("Error saving booking:", error);
       alert("Error saving booking.");
     }
   };
+  
+  
+  
+  
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 p-6 max-w-md mx-auto bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-semibold text-center">
+    <div className="">
+            <form onSubmit={handleSubmit} className="space-y-6 p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
+      <h1 className="text-2xl font-semibold text-center text-blue-600">
         {editingBooking ? "Edit Booking" : "Add New Booking"}
       </h1>
-      <div className="space-y-4">
-        <div>
+
+      {/* Responsive Form Layout with Flexbox */}
+      <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Code:</label>
           <input
+            ref={firstInputRef} 
             type="text"
             name="code"
             value={formData.code}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
-        <div>
+
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Team:</label>
           <input
             type="text"
             name="team"
             value={formData.team}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
-        <div>
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Customer Group:</label>
           <input
             type="text"
             name="customerGroup"
             value={formData.customerGroup}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
-        <div>
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Customer Name:</label>
           <input
             type="text"
             name="customerName"
             value={formData.customerName}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
-        <div>
+
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Fish Size:</label>
           <Select
             options={fishSizeOptions}
             value={fishSizeOptions.find((opt) => opt.value === formData.fishSize)}
             onChange={(option) => handleSelectChange("fishSize", option)}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full h-full rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
-        <div>
+
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Fish Type:</label>
           <Select
             options={fishTypeOptions}
             value={fishTypeOptions.find((opt) => opt.value === formData.fishType)}
             onChange={(option) => handleSelectChange("fishType", option)}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full h-full rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
-        <div>
+        <div className="flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6">
           <label className="block text-sm font-medium text-gray-700">Price:</label>
           <input
             type="text"
             name="price"
             value={formData.price}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
           />
         </div>
+      </div>
 
-        <h2 className="text-lg font-semibold text-gray-800 mt-6">Daily Quantities</h2>
-        {Object.keys(formData.dailyQuantities).map((day) => (
-          <div key={day} className="flex justify-between mb-3">
-            <label className="text-sm text-gray-600">{day}:</label>
-            <input
-              type="number"
-              name={`day-${day}`}
-              value={formData.dailyQuantities[day]}
-              onChange={handleChange}
-              className="w-20 p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-        ))}
-
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            {editingBooking ? "Update" : "Save"}
-          </button>
-          {editingBooking && (
-            <button
-              type="button"
-              onClick={clearEditingBooking}
-              className="w-full py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-          )}
+      {/* Daily Quantities Section */}
+      <h2 className="text-lg font-semibold text-gray-800 mt-6">Daily Quantities</h2>
+      {Object.keys(formData.dailyQuantities).map((day) => (
+        <div key={day} className="flex justify-between mb-3">
+          <label className="text-sm text-gray-600">{day}:</label>
+          <input
+            type="number"
+            name={`day-${day}`}
+            value={formData.dailyQuantities[day]}
+            onChange={handleChange}
+            className="w-20 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+          />
         </div>
+      ))}
+
+      {/* Submit and Cancel Buttons */}
+      <div className="flex space-x-4">
+        <button
+          type="submit"
+          className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          {editingBooking ? "Update" : "Save"}
+        </button>
+        {editingBooking && (
+          <button
+            type="button"
+            onClick={clearEditingBooking}
+            className="w-full py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </form>
+    </div>
+
   );
 };
 

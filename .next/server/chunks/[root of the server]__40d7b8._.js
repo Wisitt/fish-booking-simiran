@@ -73,6 +73,7 @@ async function GET() {
             const totalQuantity = Object.values(booking.dailyQuantities).reduce((sum, qty)=>sum + Number(qty), 0);
             // แยกข้อมูลตามขนาดปลาและวัน
             data.push({
+                Code: booking.code,
                 Team: booking.team,
                 "กลุ่มลูกค้า": booking.customerGroup,
                 "ชื่อลูกค้า": booking.customerName,

@@ -9,7 +9,7 @@ interface Booking {
     customerGroup: string;
     customerName: string;
     price: string; // Assuming price is stored as a string
-    dailyQuantities: Record<string, number>; // Assuming dailyQuantities is a JSON object
+    dailyQuantities: any; // Allowing dailyQuantities to be of any type
     fishSize: string;
     fishType: string;
     code: string; // Salesperson code
@@ -30,6 +30,7 @@ export async function GET() {
 
       // แยกข้อมูลตามขนาดปลาและวัน
       data.push({
+        Code: booking.code,
         Team: booking.team,
         "กลุ่มลูกค้า": booking.customerGroup,
         "ชื่อลูกค้า": booking.customerName,

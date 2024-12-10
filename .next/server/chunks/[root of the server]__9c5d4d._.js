@@ -67,8 +67,9 @@ async function GET() {
         const bookings = await prisma.booking.findMany();
         // Generate the summary
         const summary = bookings.map((booking)=>{
-            const totalQuantity = Object.values(booking.dailyQuantities).reduce((sum, qty)=>sum + qty, 0);
+            const totalQuantity = booking.dailyQuantities ? Object.values(booking.dailyQuantities).reduce((sum, qty)=>sum + qty, 0) : 0;
             return {
+                code: booking.code,
                 customerName: booking.customerName,
                 team: booking.team,
                 fishSize: booking.fishSize,

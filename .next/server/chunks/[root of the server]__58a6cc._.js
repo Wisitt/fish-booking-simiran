@@ -53,7 +53,9 @@ module.exports = mod;
 
 var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, x: __turbopack_external_require__, y: __turbopack_external_import__, z: require } = __turbopack_context__;
 {
+// app/api/bookings/[id].ts
 __turbopack_esm__({
+    "DELETE": (()=>DELETE),
     "PUT": (()=>PUT)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/server.js [app-route] (ecmascript)");
@@ -61,19 +63,20 @@ var __TURBOPACK__imported__module__$5b$externals$5d2f$__$5b$external$5d$__$2840$
 ;
 ;
 const prisma = new __TURBOPACK__imported__module__$5b$externals$5d2f$__$5b$external$5d$__$2840$prisma$2f$client$2c$__cjs$29$__["PrismaClient"]();
-async function PUT(req) {
+async function PUT(req, { params }) {
+    const bookingId = Number(params.id); // Convert string to number
+    const body = await req.json();
+    if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Missing required fields"
+        }, {
+            status: 400
+        });
+    }
     try {
-        const body = await req.json();
-        if (!body.id) {
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Missing ID"
-            }, {
-                status: 400
-            });
-        }
         const updatedBooking = await prisma.booking.update({
             where: {
-                id: body.id
+                id: bookingId
             },
             data: {
                 code: body.code,
@@ -83,7 +86,8 @@ async function PUT(req) {
                 fishSize: body.fishSize,
                 fishType: body.fishType,
                 price: body.price,
-                dailyQuantities: body.dailyQuantities
+                dailyQuantities: body.dailyQuantities,
+                userId: body.userId
             }
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(updatedBooking, {
@@ -92,7 +96,59 @@ async function PUT(req) {
     } catch (error) {
         console.error("Error updating booking:", error);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Server error"
+            error: "Error saving booking"
+        }, {
+            status: 500
+        });
+    }
+}
+async function DELETE(req, { params }) {
+    const email = req.headers.get("email");
+    if (!email) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            message: "Email header is missing"
+        }, {
+            status: 400
+        });
+    }
+    const bookingId = Number(params.id);
+    try {
+        const booking = await prisma.booking.findUnique({
+            where: {
+                id: bookingId
+            }
+        });
+        if (!booking) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                message: "Booking not found"
+            }, {
+                status: 404
+            });
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                email
+            }
+        });
+        if (user && booking.userId !== user.id && user.role !== "admin") {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                message: "Unauthorized to delete this booking"
+            }, {
+                status: 403
+            });
+        }
+        await prisma.booking.delete({
+            where: {
+                id: bookingId
+            }
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            message: "Booking deleted successfully"
+        });
+    } catch (error) {
+        console.error("Error deleting booking:", error);
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            message: "Error deleting booking"
         }, {
             status: 500
         });

@@ -9,13 +9,25 @@ datasource db {
 
 model Booking {
   id             Int      @id @default(autoincrement())
-  code           String   // รหัสเซลล์
+  code           String
   team           String
   customerGroup  String
   customerName   String
-  price          String   // ใช้ String สำหรับราคา
-  dailyQuantities Json     // ข้อมูล JSON สำหรับจำนวนปลาแต่ละวัน
+  price          String
+  dailyQuantities Json
   fishSize       String
   fishType       String
   createdAt      DateTime @default(now())
+  userId         Int      // Relation to User
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  passwordHash  String
+  role          String   // "admin" or "user"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  bookings      Booking[] // Relation to bookings
 }

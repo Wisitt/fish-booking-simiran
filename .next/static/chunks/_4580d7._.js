@@ -25,12 +25,11 @@ const Select = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$
     ssr: false
 });
 _c = Select;
-const BookingForm = ({ setBookings, editingBooking, clearEditingBooking })=>{
+const BookingForm = ({ setBookings, editingBooking, clearEditingBooking, firstInputRef })=>{
     _s();
     const getWeekDays = ()=>{
         const startDate = new Date();
         const days = [];
-        // Get Monday to Saturday of the current week
         for(let i = 1; i <= 6; i++){
             const date = new Date(startDate);
             date.setDate(startDate.getDate() + (i - startDate.getDay()));
@@ -76,6 +75,9 @@ const BookingForm = ({ setBookings, editingBooking, clearEditingBooking })=>{
         "BookingForm.useEffect": ()=>{
             if (editingBooking) {
                 setFormData(editingBooking); // Load data for editing
+                if (firstInputRef.current) {
+                    firstInputRef.current.focus();
+                }
             } else {
                 const weekDays = getWeekDays(); // Get the days of the current week
                 setFormData({
@@ -161,285 +163,300 @@ const BookingForm = ({ setBookings, editingBooking, clearEditingBooking })=>{
             alert("Error saving booking.");
         }
     };
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
-        onSubmit: handleSubmit,
-        className: "space-y-6 p-6 max-w-md mx-auto bg-white rounded-lg shadow-lg",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                className: "text-2xl font-semibold text-center",
-                children: editingBooking ? "Edit Booking" : "Add New Booking"
-            }, void 0, false, {
-                fileName: "[project]/app/components/BookingForm.tsx",
-                lineNumber: 166,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "space-y-4",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Code:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 171,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                type: "text",
-                                name: "code",
-                                value: formData.code,
-                                onChange: handleChange,
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 172,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 170,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Team:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 181,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                type: "text",
-                                name: "team",
-                                value: formData.team,
-                                onChange: handleChange,
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 182,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 180,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Customer Group:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 191,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                type: "text",
-                                name: "customerGroup",
-                                value: formData.customerGroup,
-                                onChange: handleChange,
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 192,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 190,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Customer Name:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 201,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                type: "text",
-                                name: "customerName",
-                                value: formData.customerName,
-                                onChange: handleChange,
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 202,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 200,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Fish Size:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 211,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Select, {
-                                options: fishSizeOptions,
-                                value: fishSizeOptions.find((opt)=>opt.value === formData.fishSize),
-                                onChange: (option)=>handleSelectChange("fishSize", option),
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 212,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 210,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Fish Type:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 220,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Select, {
-                                options: fishTypeOptions,
-                                value: fishTypeOptions.find((opt)=>opt.value === formData.fishType),
-                                onChange: (option)=>handleSelectChange("fishType", option),
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 221,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 219,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-medium text-gray-700",
-                                children: "Price:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 230,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                type: "text",
-                                name: "price",
-                                value: formData.price,
-                                onChange: handleChange,
-                                className: "w-full p-3 border border-gray-300 rounded-md"
-                            }, void 0, false, {
-                                fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 231,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 229,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-lg font-semibold text-gray-800 mt-6",
-                        children: "Daily Quantities"
-                    }, void 0, false, {
-                        fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 240,
-                        columnNumber: 9
-                    }, this),
-                    Object.keys(formData.dailyQuantities).map((day)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex justify-between mb-3",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "",
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+            onSubmit: handleSubmit,
+            className: "space-y-6 p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-xl",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                    className: "text-2xl font-semibold text-center text-blue-600",
+                    children: editingBooking ? "Edit Booking" : "Add New Booking"
+                }, void 0, false, {
+                    fileName: "[project]/app/components/BookingForm.tsx",
+                    lineNumber: 172,
+                    columnNumber: 7
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "flex flex-wrap gap-2",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                    className: "text-sm text-gray-600",
-                                    children: [
-                                        day,
-                                        ":"
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/app/components/BookingForm.tsx",
-                                    lineNumber: 243,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "number",
-                                    name: `day-${day}`,
-                                    value: formData.dailyQuantities[day],
-                                    onChange: handleChange,
-                                    className: "w-20 p-2 border border-gray-300 rounded-md"
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Code:"
                                 }, void 0, false, {
                                     fileName: "[project]/app/components/BookingForm.tsx",
-                                    lineNumber: 244,
-                                    columnNumber: 13
+                                    lineNumber: 179,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    ref: firstInputRef,
+                                    type: "text",
+                                    name: "code",
+                                    value: formData.code,
+                                    onChange: handleChange,
+                                    className: "w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 180,
+                                    columnNumber: 11
                                 }, this)
                             ]
-                        }, day, true, {
+                        }, void 0, true, {
                             fileName: "[project]/app/components/BookingForm.tsx",
-                            lineNumber: 242,
-                            columnNumber: 11
-                        }, this)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex space-x-4",
+                            lineNumber: 178,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Team:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 191,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    type: "text",
+                                    name: "team",
+                                    value: formData.team,
+                                    onChange: handleChange,
+                                    className: "w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 192,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 190,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Customer Group:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 201,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    type: "text",
+                                    name: "customerGroup",
+                                    value: formData.customerGroup,
+                                    onChange: handleChange,
+                                    className: "w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 202,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 200,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Customer Name:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 211,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    type: "text",
+                                    name: "customerName",
+                                    value: formData.customerName,
+                                    onChange: handleChange,
+                                    className: "w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 212,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 210,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Fish Size:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 222,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Select, {
+                                    options: fishSizeOptions,
+                                    value: fishSizeOptions.find((opt)=>opt.value === formData.fishSize),
+                                    onChange: (option)=>handleSelectChange("fishSize", option),
+                                    className: "w-full h-full rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 223,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 221,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Fish Type:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 232,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Select, {
+                                    options: fishTypeOptions,
+                                    value: fishTypeOptions.find((opt)=>opt.value === formData.fishType),
+                                    onChange: (option)=>handleSelectChange("fishType", option),
+                                    className: "w-full h-full rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 233,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 231,
+                            columnNumber: 9
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "flex flex-col sm:w-1/1 md:w-1/4 lg:w-1/6",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    className: "block text-sm font-medium text-gray-700",
+                                    children: "Price:"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 242,
+                                    columnNumber: 11
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    type: "text",
+                                    name: "price",
+                                    value: formData.price,
+                                    onChange: handleChange,
+                                    className: "w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/components/BookingForm.tsx",
+                                    lineNumber: 243,
+                                    columnNumber: 11
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 241,
+                            columnNumber: 9
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/app/components/BookingForm.tsx",
+                    lineNumber: 177,
+                    columnNumber: 7
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                    className: "text-lg font-semibold text-gray-800 mt-6",
+                    children: "Daily Quantities"
+                }, void 0, false, {
+                    fileName: "[project]/app/components/BookingForm.tsx",
+                    lineNumber: 254,
+                    columnNumber: 7
+                }, this),
+                Object.keys(formData.dailyQuantities).map((day)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex justify-between mb-3",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                type: "submit",
-                                className: "w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700",
-                                children: editingBooking ? "Update" : "Save"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                className: "text-sm text-gray-600",
+                                children: [
+                                    day,
+                                    ":"
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 255,
+                                lineNumber: 257,
                                 columnNumber: 11
                             }, this),
-                            editingBooking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                type: "button",
-                                onClick: clearEditingBooking,
-                                className: "w-full py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400",
-                                children: "Cancel"
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                type: "number",
+                                name: `day-${day}`,
+                                value: formData.dailyQuantities[day],
+                                onChange: handleChange,
+                                className: "w-20 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600"
                             }, void 0, false, {
                                 fileName: "[project]/app/components/BookingForm.tsx",
-                                lineNumber: 262,
-                                columnNumber: 13
+                                lineNumber: 258,
+                                columnNumber: 11
                             }, this)
                         ]
-                    }, void 0, true, {
+                    }, day, true, {
                         fileName: "[project]/app/components/BookingForm.tsx",
-                        lineNumber: 254,
+                        lineNumber: 256,
                         columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/components/BookingForm.tsx",
-                lineNumber: 169,
-                columnNumber: 7
-            }, this)
-        ]
-    }, void 0, true, {
+                    }, this)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "flex space-x-4",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            type: "submit",
+                            className: "w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700",
+                            children: editingBooking ? "Update" : "Save"
+                        }, void 0, false, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 270,
+                            columnNumber: 9
+                        }, this),
+                        editingBooking && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                            type: "button",
+                            onClick: clearEditingBooking,
+                            className: "w-full py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400",
+                            children: "Cancel"
+                        }, void 0, false, {
+                            fileName: "[project]/app/components/BookingForm.tsx",
+                            lineNumber: 277,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/app/components/BookingForm.tsx",
+                    lineNumber: 269,
+                    columnNumber: 7
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/app/components/BookingForm.tsx",
+            lineNumber: 171,
+            columnNumber: 13
+        }, this)
+    }, void 0, false, {
         fileName: "[project]/app/components/BookingForm.tsx",
-        lineNumber: 165,
+        lineNumber: 170,
         columnNumber: 5
     }, this);
 };
@@ -487,223 +504,6 @@ const SummaryTable = ()=>{
             fetchSummary();
         }
     }["SummaryTable.useEffect"], []);
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "container mx-auto px-4 py-8",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                className: "text-2xl font-bold mb-4 text-blue-600",
-                children: "Customer Summary"
-            }, void 0, false, {
-                fileName: "[project]/app/components/SummaryTable.tsx",
-                lineNumber: 33,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
-                className: "table-auto w-full border-collapse border border-gray-300",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("thead", {
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
-                            className: "bg-gray-100",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                    className: "border border-gray-300 px-4 py-2",
-                                    children: "Customer Name"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/components/SummaryTable.tsx",
-                                    lineNumber: 37,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                    className: "border border-gray-300 px-4 py-2",
-                                    children: "Team"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/components/SummaryTable.tsx",
-                                    lineNumber: 38,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                    className: "border border-gray-300 px-4 py-2",
-                                    children: "Fish Size"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/components/SummaryTable.tsx",
-                                    lineNumber: 39,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
-                                    className: "border border-gray-300 px-4 py-2",
-                                    children: "Total Quantity"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/components/SummaryTable.tsx",
-                                    lineNumber: 40,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/app/components/SummaryTable.tsx",
-                            lineNumber: 36,
-                            columnNumber: 11
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/app/components/SummaryTable.tsx",
-                        lineNumber: 35,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
-                        children: summary.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
-                                className: "text-center",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                        className: "border border-gray-300 px-4 py-2",
-                                        children: item.customerName
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/components/SummaryTable.tsx",
-                                        lineNumber: 46,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                        className: "border border-gray-300 px-4 py-2",
-                                        children: item.team
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/components/SummaryTable.tsx",
-                                        lineNumber: 47,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                        className: "border border-gray-300 px-4 py-2",
-                                        children: item.fishSize
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/components/SummaryTable.tsx",
-                                        lineNumber: 48,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                        className: "border border-gray-300 px-4 py-2",
-                                        children: item.totalQuantity
-                                    }, void 0, false, {
-                                        fileName: "[project]/app/components/SummaryTable.tsx",
-                                        lineNumber: 49,
-                                        columnNumber: 15
-                                    }, this)
-                                ]
-                            }, index, true, {
-                                fileName: "[project]/app/components/SummaryTable.tsx",
-                                lineNumber: 45,
-                                columnNumber: 13
-                            }, this))
-                    }, void 0, false, {
-                        fileName: "[project]/app/components/SummaryTable.tsx",
-                        lineNumber: 43,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/app/components/SummaryTable.tsx",
-                lineNumber: 34,
-                columnNumber: 7
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/app/components/SummaryTable.tsx",
-        lineNumber: 32,
-        columnNumber: 5
-    }, this);
-};
-_s(SummaryTable, "TtO7xpWp7Az10wBLmuG22dxRcJI=");
-_c = SummaryTable;
-const __TURBOPACK__default__export__ = SummaryTable;
-var _c;
-__turbopack_refresh__.register(_c, "SummaryTable");
-if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
-    __turbopack_refresh__.registerExports(module, globalThis.$RefreshHelpers$);
-}
-}}),
-"[project]/app/bookings/page.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
-
-var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, k: __turbopack_refresh__, m: module, z: require } = __turbopack_context__;
-{
-// app/bookings/page.tsx
-__turbopack_esm__({
-    "default": (()=>__TURBOPACK__default__export__)
-});
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$BookingForm$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/app/components/BookingForm.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$SummaryTable$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/app/components/SummaryTable.tsx [app-client] (ecmascript)");
-;
-var _s = __turbopack_refresh__.signature();
-"use client";
-;
-;
-;
-const SECRET_CODES = [
-    "edok",
-    "dogfuse",
-    "wisit"
-];
-const BookingPage = ()=>{
-    _s();
-    const [bookings, setBookings] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [editingBooking, setEditingBooking] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [deletingBooking, setDeletingBooking] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [showModal, setShowModal] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [code, setCode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "BookingPage.useEffect": ()=>{
-            const fetchBookings = {
-                "BookingPage.useEffect.fetchBookings": async ()=>{
-                    try {
-                        const response = await fetch("/api/bookings");
-                        if (!response.ok) throw new Error("Failed to fetch bookings");
-                        const data = await response.json();
-                        setBookings(data);
-                    } catch (error) {
-                        console.error("Error fetching bookings:", error);
-                    }
-                }
-            }["BookingPage.useEffect.fetchBookings"];
-            fetchBookings();
-        }
-    }["BookingPage.useEffect"], []);
-    const handleDelete = async (id)=>{
-        setDeletingBooking(bookings.find((booking)=>booking.id === id) || null);
-        setShowModal(true);
-    };
-    const handleCloseModal = ()=>{
-        setShowModal(false);
-        setCode("");
-    };
-    const handleCodeChange = (e)=>{
-        setCode(e.target.value);
-    };
-    const handleConfirmDelete = async ()=>{
-        if (SECRET_CODES.includes(code) && deletingBooking) {
-            try {
-                const response = await fetch(`/api/bookings?id=${deletingBooking.id}&code=${code}`, {
-                    method: "DELETE"
-                });
-                if (response.ok) {
-                    setBookings(bookings.filter((booking)=>booking.id !== deletingBooking.id));
-                    alert("Booking deleted successfully!");
-                } else {
-                    alert("Invalid code. Deletion not authorized.");
-                }
-            } catch (error) {
-                console.error("Error deleting booking:", error);
-                alert("Error deleting booking.");
-            } finally{
-                handleCloseModal();
-            }
-        } else {
-            alert("Incorrect code. Please try again.");
-        }
-    };
-    const handleEdit = (booking)=>{
-        setEditingBooking(booking);
-    };
-    const clearEditingBooking = ()=>{
-        setEditingBooking(null);
-    };
     const downloadExcel = async ()=>{
         try {
             const response = await fetch("/api/export/excel");
@@ -724,63 +524,439 @@ const BookingPage = ()=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "container mx-auto px-4 py-8",
         children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                className: "text-2xl font-semibold mb-4 text-blue-600",
+                children: "Customer Summary"
+            }, void 0, false, {
+                fileName: "[project]/app/components/SummaryTable.tsx",
+                lineNumber: 52,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex justify-between items-center mb-4",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {}, void 0, false, {
+                        fileName: "[project]/app/components/SummaryTable.tsx",
+                        lineNumber: 56,
+                        columnNumber: 9
+                    }, this),
+                    " ",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: downloadExcel,
+                        className: "bg-green-500 text-white px-6 py-3 rounded-lg flex items-center hover:bg-green-600 transition duration-300",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                src: "/excel.png",
+                                alt: "Excel Logo",
+                                className: "w-6 h-6 mr-2"
+                            }, void 0, false, {
+                                fileName: "[project]/app/components/SummaryTable.tsx",
+                                lineNumber: 62,
+                                columnNumber: 11
+                            }, this),
+                            "Export to Excel"
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/components/SummaryTable.tsx",
+                        lineNumber: 57,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/app/components/SummaryTable.tsx",
+                lineNumber: 55,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "overflow-x-auto",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
+                    className: "min-w-full table-auto bg-white border-collapse shadow-md rounded-lg",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("thead", {
+                            className: "bg-blue-100",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                        className: "px-6 py-3 text-sm font-medium text-left text-gray-600 border-b",
+                                        children: "Customer Name"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/components/SummaryTable.tsx",
+                                        lineNumber: 71,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                        className: "px-6 py-3 text-sm font-medium text-left text-gray-600 border-b",
+                                        children: "Team"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/components/SummaryTable.tsx",
+                                        lineNumber: 72,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                        className: "px-6 py-3 text-sm font-medium text-left text-gray-600 border-b",
+                                        children: "Fish Size"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/components/SummaryTable.tsx",
+                                        lineNumber: 73,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
+                                        className: "px-6 py-3 text-sm font-medium text-left text-gray-600 border-b",
+                                        children: "Total Quantity"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/components/SummaryTable.tsx",
+                                        lineNumber: 74,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/components/SummaryTable.tsx",
+                                lineNumber: 70,
+                                columnNumber: 13
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/app/components/SummaryTable.tsx",
+                            lineNumber: 69,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
+                            children: summary.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
+                                    className: "hover:bg-gray-50",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "px-6 py-4 text-sm text-gray-800 border-b",
+                                            children: item.customerName
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/components/SummaryTable.tsx",
+                                            lineNumber: 80,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "px-6 py-4 text-sm text-gray-800 border-b",
+                                            children: item.team
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/components/SummaryTable.tsx",
+                                            lineNumber: 81,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "px-6 py-4 text-sm text-gray-800 border-b",
+                                            children: item.fishSize
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/components/SummaryTable.tsx",
+                                            lineNumber: 82,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "px-6 py-4 text-sm text-gray-800 border-b",
+                                            children: item.totalQuantity
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/components/SummaryTable.tsx",
+                                            lineNumber: 83,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, index, true, {
+                                    fileName: "[project]/app/components/SummaryTable.tsx",
+                                    lineNumber: 79,
+                                    columnNumber: 15
+                                }, this))
+                        }, void 0, false, {
+                            fileName: "[project]/app/components/SummaryTable.tsx",
+                            lineNumber: 77,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/app/components/SummaryTable.tsx",
+                    lineNumber: 68,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/app/components/SummaryTable.tsx",
+                lineNumber: 67,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/app/components/SummaryTable.tsx",
+        lineNumber: 51,
+        columnNumber: 5
+    }, this);
+};
+_s(SummaryTable, "TtO7xpWp7Az10wBLmuG22dxRcJI=");
+_c = SummaryTable;
+const __TURBOPACK__default__export__ = SummaryTable;
+var _c;
+__turbopack_refresh__.register(_c, "SummaryTable");
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_refresh__.registerExports(module, globalThis.$RefreshHelpers$);
+}
+}}),
+"[project]/app/bookings/page.tsx [app-client] (ecmascript)": ((__turbopack_context__) => {
+"use strict";
+
+var { r: __turbopack_require__, f: __turbopack_module_context__, i: __turbopack_import__, s: __turbopack_esm__, v: __turbopack_export_value__, n: __turbopack_export_namespace__, c: __turbopack_cache__, M: __turbopack_modules__, l: __turbopack_load__, j: __turbopack_dynamic__, P: __turbopack_resolve_absolute_path__, U: __turbopack_relative_url__, R: __turbopack_resolve_module_id_path__, b: __turbopack_worker_blob_url__, g: global, __dirname, k: __turbopack_refresh__, m: module, z: require } = __turbopack_context__;
+{
+// app/booking/page.tsx 
+__turbopack_esm__({
+    "default": (()=>__TURBOPACK__default__export__)
+});
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$BookingForm$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/app/components/BookingForm.tsx [app-client] (ecmascript)");
+;
+var _s = __turbopack_refresh__.signature();
+"use client";
+;
+;
+const BookingPage = ()=>{
+    _s();
+    const [bookings, setBookings] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [editingBooking, setEditingBooking] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [deletingBooking, setDeletingBooking] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [showModal, setShowModal] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [code, setCode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const firstInputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null); // Create ref for the first input
+    const fetchBookings = async ()=>{
+        const response = await fetch("/api/bookings", {
+            method: "GET",
+            headers: {
+                "email": "user@example.com",
+                "role": "user" // หรือ "admin" ขึ้นอยู่กับ role
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setBookings(data);
+    };
+    const handleDelete = async (id)=>{
+        setDeletingBooking(bookings.find((booking)=>booking.id === id) || null);
+        setShowModal(true);
+    };
+    const handleCloseModal = ()=>{
+        setShowModal(false);
+        setCode("");
+    };
+    const handleCodeChange = (e)=>{
+        setCode(e.target.value);
+    };
+    const handleConfirmDelete = async ()=>{
+        if (code === "edok" || code === "dogfuse" || code === "wisit") {
+            try {
+                const response = await fetch(`/api/bookings?id=${deletingBooking?.id}&code=${code}`, {
+                    method: "DELETE"
+                });
+                if (response.ok) {
+                    setBookings(bookings.filter((booking)=>booking.id !== deletingBooking?.id));
+                    alert("Booking deleted successfully!");
+                } else {
+                    alert("Invalid code. Deletion not authorized.");
+                }
+            } catch (error) {
+                console.error("Error deleting booking:", error);
+                alert("Error deleting booking.");
+            } finally{
+                handleCloseModal();
+            }
+        } else {
+            alert("Incorrect code. Please try again.");
+        }
+    };
+    const handleEdit = (booking)=>{
+        setEditingBooking(booking);
+    };
+    const clearEditingBooking = ()=>{
+        setEditingBooking(null);
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "container mx-auto px-6 py-8",
+        children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                className: "text-4xl font-bold mb-8 text-center text-blue-600",
+                className: "text-4xl font-bold mb-6 text-center text-blue-600",
                 children: "Fish Booking System"
             }, void 0, false, {
                 fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 111,
+                lineNumber: 94,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$BookingForm$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                 setBookings: setBookings,
                 editingBooking: editingBooking,
-                clearEditingBooking: clearEditingBooking
+                clearEditingBooking: clearEditingBooking,
+                firstInputRef: firstInputRef
             }, void 0, false, {
                 fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 115,
+                lineNumber: 96,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                 className: "text-2xl font-semibold mt-10 mb-4 text-blue-500",
-                children: "All Bookings"
+                children: "Your Bookings"
             }, void 0, false, {
                 fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 121,
+                lineNumber: 103,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                className: "space-y-4",
-                children: bookings.map((booking)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
+                children: bookings.map((booking)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "border p-4 rounded-lg shadow-md bg-gray-50 flex flex-col space-y-4",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "font-bold text-lg text-blue-700",
-                                children: [
-                                    "Code: ",
-                                    booking.code
-                                ]
-                            }, void 0, true, {
+                                children: booking.code
+                            }, void 0, false, {
                                 fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 127,
+                                lineNumber: 110,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "font-bold text-lg text-blue-700",
+                                className: "text-sm text-gray-700",
                                 children: [
-                                    "Team: ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Team:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 112,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
                                     booking.team
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 128,
+                                lineNumber: 111,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-gray-600",
+                                className: "text-sm text-gray-700",
                                 children: [
-                                    "Customer: ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Customer Group:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 115,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
+                                    booking.customerGroup
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/bookings/page.tsx",
+                                lineNumber: 114,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-sm text-gray-700",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Customer:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 118,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
                                     booking.customerName
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/bookings/page.tsx",
+                                lineNumber: 117,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-sm text-gray-700",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Fish Size:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 121,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
+                                    booking.fishSize
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/bookings/page.tsx",
+                                lineNumber: 120,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-sm text-gray-700",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Fish Type:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 124,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
+                                    booking.fishType
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/bookings/page.tsx",
+                                lineNumber: 123,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-sm text-gray-700",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Price:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 127,
+                                        columnNumber: 15
+                                    }, this),
+                                    " ",
+                                    booking.price,
+                                    " THB"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/bookings/page.tsx",
+                                lineNumber: 126,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-sm text-gray-700",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Daily Quantities:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 130,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                        children: Object.entries(booking.dailyQuantities).map(([day, qty])=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                children: [
+                                                    day,
+                                                    ": ",
+                                                    qty,
+                                                    " fish"
+                                                ]
+                                            }, day, true, {
+                                                fileName: "[project]/app/bookings/page.tsx",
+                                                lineNumber: 133,
+                                                columnNumber: 19
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/bookings/page.tsx",
+                                        lineNumber: 131,
+                                        columnNumber: 15
+                                    }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/bookings/page.tsx",
@@ -788,101 +964,41 @@ const BookingPage = ()=>{
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-gray-600",
-                                children: [
-                                    "Fish Size: ",
-                                    booking.fishSize
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 130,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-gray-600",
-                                children: [
-                                    "Fish Type: ",
-                                    booking.fishType
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 131,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-gray-600",
-                                children: [
-                                    "Price: ",
-                                    booking.price,
-                                    " THB"
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 132,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "text-gray-600",
-                                children: "Daily Quantities:"
-                            }, void 0, false, {
-                                fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 133,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                children: Object.entries(booking.dailyQuantities).map(([day, qty])=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                        children: [
-                                            day,
-                                            ": ",
-                                            qty,
-                                            " fish"
-                                        ]
-                                    }, day, true, {
-                                        fileName: "[project]/app/bookings/page.tsx",
-                                        lineNumber: 136,
-                                        columnNumber: 17
-                                    }, this))
-                            }, void 0, false, {
-                                fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 134,
-                                columnNumber: 13
-                            }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex space-x-4 mt-4",
+                                className: "flex justify-between space-x-4 mt-4",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>handleEdit(booking),
-                                        className: "bg-yellow-500 text-white px-4 py-2 rounded",
+                                        className: "bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300",
                                         children: "Edit"
                                     }, void 0, false, {
                                         fileName: "[project]/app/bookings/page.tsx",
-                                        lineNumber: 142,
+                                        lineNumber: 140,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>handleDelete(booking.id),
-                                        className: "bg-red-500 text-white px-4 py-2 rounded",
+                                        className: "bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300",
                                         children: "Delete"
                                     }, void 0, false, {
                                         fileName: "[project]/app/bookings/page.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 146,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/bookings/page.tsx",
-                                lineNumber: 141,
+                                lineNumber: 139,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, booking.id, true, {
                         fileName: "[project]/app/bookings/page.tsx",
-                        lineNumber: 126,
+                        lineNumber: 106,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 124,
+                lineNumber: 104,
                 columnNumber: 7
             }, this),
             showModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -895,7 +1011,7 @@ const BookingPage = ()=>{
                             children: "Confirm Deletion"
                         }, void 0, false, {
                             fileName: "[project]/app/bookings/page.tsx",
-                            lineNumber: 156,
+                            lineNumber: 160,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -903,7 +1019,7 @@ const BookingPage = ()=>{
                             children: "Please enter the secret code to delete the booking."
                         }, void 0, false, {
                             fileName: "[project]/app/bookings/page.tsx",
-                            lineNumber: 157,
+                            lineNumber: 161,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -911,10 +1027,10 @@ const BookingPage = ()=>{
                             value: code,
                             onChange: handleCodeChange,
                             placeholder: "Enter code",
-                            className: "w-full p-2 border border-gray-300 rounded-md mb-4"
+                            className: "w-full p-3 border border-gray-300 rounded-md mb-4"
                         }, void 0, false, {
                             fileName: "[project]/app/bookings/page.tsx",
-                            lineNumber: 159,
+                            lineNumber: 163,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -922,61 +1038,47 @@ const BookingPage = ()=>{
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: handleConfirmDelete,
-                                    className: "w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none",
+                                    className: "w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none transition duration-300",
                                     children: "Confirm"
                                 }, void 0, false, {
                                     fileName: "[project]/app/bookings/page.tsx",
-                                    lineNumber: 168,
+                                    lineNumber: 172,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: handleCloseModal,
-                                    className: "w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none",
+                                    className: "w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-md hover:bg-gray-400 focus:outline-none transition duration-300",
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/app/bookings/page.tsx",
-                                    lineNumber: 174,
+                                    lineNumber: 178,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/bookings/page.tsx",
-                            lineNumber: 167,
+                            lineNumber: 171,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/bookings/page.tsx",
-                    lineNumber: 155,
+                    lineNumber: 159,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 154,
+                lineNumber: 158,
                 columnNumber: 9
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$SummaryTable$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 185,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                onClick: downloadExcel,
-                className: "bg-green-500 text-white px-4 py-2 rounded",
-                children: "Export to Excel"
-            }, void 0, false, {
-                fileName: "[project]/app/bookings/page.tsx",
-                lineNumber: 186,
-                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/bookings/page.tsx",
-        lineNumber: 110,
+        lineNumber: 93,
         columnNumber: 5
     }, this);
 };
-_s(BookingPage, "vfkCmHQKJlyJxPLqCpOxJEyxiSk=");
+_s(BookingPage, "4OzavBGbGW1ccpFHXxUGwJWMK8M=");
 _c = BookingPage;
 const __TURBOPACK__default__export__ = BookingPage;
 var _c;

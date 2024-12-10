@@ -9,7 +9,7 @@ interface Booking {
   customerGroup: string;
   customerName: string;
   price: string; // Assuming price is stored as a string
-  dailyQuantities: Record<string, number>; // Assuming dailyQuantities is a JSON object
+  dailyQuantities: Record<string, number> | null; // dailyQuantities can be null
   fishSize: string;
   fishType: string;
   code: string; // Salesperson code
@@ -19,16 +19,16 @@ interface Booking {
 export async function GET() {
   try {
     // Fetch all bookings from the database
-    const bookings: Booking[] = await prisma.booking.findMany();
+    const bookings = await prisma.booking.findMany();
 
     // Generate the summary
     const summary = bookings.map((booking) => {
-      const totalQuantity = Object.values(booking.dailyQuantities).reduce(
-        (sum, qty) => sum + qty,
-        0
-      );
+      const totalQuantity = booking.dailyQuantities
+        ? Object.values(booking.dailyQuantities).reduce((sum, qty) => sum + qty, 0)
+        : 0;
 
       return {
+        code: booking.code,
         customerName: booking.customerName,
         team: booking.team,
         fishSize: booking.fishSize,
