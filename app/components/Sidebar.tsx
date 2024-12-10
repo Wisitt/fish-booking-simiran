@@ -22,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const handleLogout = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("email");
+    localStorage.removeItem("userId");
     router.push("/login"); // Redirect to login page after logout
   };
 
@@ -33,24 +34,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     <div
       className={`fixed left-0 top-0 z-50 h-full bg-gradient-to-r from-[#0A2647] via-[#144272] to-[#205295] text-white transition-all duration-300 ease-in-out ${
         isOpen ? "w-64" : "w-20"
-      } h-screen shadow-xl rounded-r-sm`}
+      } h-screen shadow-xl rounded-r-md`}
     >
-      <div className="flex flex-col w-full h-full p-1.5" 
-       style={{
-        background: "rgba(42, 36, 36, 0.4)", // Glass effect background
-        backdropFilter: "blur(19.1px)", // Apply frosted glass effect
-        WebkitBackdropFilter: "blur(19.1px)", // For Safari
-        borderRadius: "16px", // Rounded corners
-        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        border: "1px solid rgba(42, 36, 36, 0.71)", // Light border
-      }}>
+      <div className="flex flex-col w-full h-full p-1.5">
         <button
           onClick={toggleSidebar}
-          className={`relative ${isOpen ? "top-[0px] right-[-190px]" : "top-[0px] right-[-10px]"} p-2 transition-all duration-300 transform hover:scale-110`}
+          className={`relative h-8 w-10 mb-2 ${isOpen ? "top-0 left-[199px]" : "top-0 left-3"} p-2 transition-all duration-300 transform hover:scale-110`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`w-8 h-8 ${isOpen ? "text-white" : "text-gray-100"}`}
+            className={`w-8 h-full w-10 absolute ${isOpen ? "text-white top-0 right-0" : "text-gray-100 top-0 left-0"} transition-all duration-300 transform `}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -31,7 +31,7 @@ const LoginPage = () => {
       if (role === "admin") {
         router.push("/admin");
       } else {
-        router.push("/bookings");
+        router.push("/");
       }
     } else {
       alert(data.message || "Invalid credentials.");

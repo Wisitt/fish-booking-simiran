@@ -15,16 +15,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // เพิ่ม event listener เมื่อมีการเปลี่ยนแปลงใน localStorage
   useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role) {
-      setIsLoggedIn(true);  // Set to true if there is a role
-    } else {
-      setIsLoggedIn(false); // Set to false if no role is found
-    }
-  }, [router]);
+    const checkLoginStatus = () => {
+      const role = localStorage.getItem("role");
+      setIsLoggedIn(!!role);  // ถ้ามี role แสดงว่า user ได้เข้าสู่ระบบ
+    };
 
-  // If user is not logged in, show login page, else show the sidebar
+    // เช็คสถานะการล็อกอินทันทีที่หน้าโหลด
+    checkLoginStatus();
+
+    // ฟังการเปลี่ยนแปลงใน localStorage
+    window.addEventListener("storage", checkLoginStatus);
+
+    // ทำความสะอาดหลังจากการ render
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+    };
+  }, [pathname]);
+
+  // ถ้า user ไม่ล็อกอิน หรืออยู่ในหน้า login, ให้แสดงเฉพาะ children
   if (!isLoggedIn || pathname === "/login") {
     return (
       <html lang="en">
