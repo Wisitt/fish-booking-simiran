@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
+// Updated JsonValue definition
+
 interface BookingItem {
   fishType: string;
   createdAt: Date;
-  dailyQuantities: JsonValue;
+  dailyQuantities: JsonValue; // Updated type
   customerName: string | null;
 }
-
 
 export async function POST(req: Request) {
   try {
@@ -36,11 +37,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "No bookings found" }, { status: 404 });
     }
 
-    // Weekly Breakdown
     const weeklyBookings = processWeeklyBookings(bookings);
     const totalBookings = weeklyBookings.reduce((sum, w) => sum + w.totalQuantity, 0);
 
-    // Growth Rate (week-to-week)
     let growthRate = 0;
     if (weeklyBookings.length > 1) {
       const latest = weeklyBookings[weeklyBookings.length - 1].totalQuantity;
@@ -50,17 +49,14 @@ export async function POST(req: Request) {
       }
     }
 
-    // Fish Totals
     const fishTotals: Record<string, number> = {};
     for (const booking of bookings) {
       const qty = totalFromDailyQuantities(booking.dailyQuantities);
       fishTotals[booking.fishType] = (fishTotals[booking.fishType] || 0) + qty;
     }
 
-    // Most Popular Fish
     const mostPopularFish = Object.keys(fishTotals).reduce((a, b) => (fishTotals[a] > fishTotals[b] ? a : b));
 
-    // Fish Ranking (with % share)
     const fishEntries = Object.entries(fishTotals);
     fishEntries.sort((a, b) => b[1] - a[1]);
     const fishRanking = fishEntries.map(([fish, total]) => ({
@@ -69,7 +65,6 @@ export async function POST(req: Request) {
       share: (total / totalBookings) * 100,
     }));
 
-    // Customer Totals
     const customerTotals: Record<string, number> = {};
     for (const booking of bookings) {
       const qty = totalFromDailyQuantities(booking.dailyQuantities);
@@ -80,20 +75,17 @@ export async function POST(req: Request) {
     const customerEntries = Object.entries(customerTotals);
     customerEntries.sort((a, b) => b[1] - a[1]);
 
-    // Top 3 Customers
     const topCustomers = customerEntries.slice(0, 3).map(([customerName, totalQuantity]) => ({
       customerName,
       totalQuantity,
     }));
 
-    // Customer Distribution (for Pie Chart)
     const customerDistribution = customerEntries.map(([customerName, total]) => ({
       customerName,
       total,
       share: (total / totalBookings) * 100,
     }));
 
-    // Monthly Breakdown (Seasonality)
     const monthlyBreakdown = processMonthlyBookings(bookings);
 
     const result = {
@@ -163,7 +155,7 @@ function processMonthlyBookings(bookings: BookingItem[]) {
   }));
 }
 
-function totalFromDailyQuantities(dailyQuantities: Prisma.JsonValue): number {
+function totalFromDailyQuantities(dailyQuantities: JsonValue): number {
   if (
     dailyQuantities &&
     typeof dailyQuantities === "object" &&
