@@ -1,11 +1,11 @@
-// app/api/bookings/[id]/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// PUT: อัพเดท booking ตาม id
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+// PUT: Update booking by ID
+export async function PUT(req: Request, context: { params: { id: string } }) {
+  const { params } = context;
   const bookingId = Number(params.id);
   const body = await req.json();
 
@@ -38,8 +38,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// DELETE: ลบ booking ตาม id โดยตรวจสอบ email จาก header
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+// DELETE: Delete booking by ID with email verification
+export async function DELETE(req: Request, context: { params: { id: string } }) {
+  const { params } = context;
   const email = req.headers.get("email");
   const bookingId = Number(params.id);
 
@@ -58,7 +59,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     const user = await prisma.user.findUnique({ where: { email } });
 
-    // ถ้าผู้ใช้ไม่ใช่เจ้าของ booking และไม่ใช่ admin จะลบไม่ได้
+    // If the user is not the owner and not an admin, deny deletion
     if (user && booking.userId !== user.id && user.role !== "admin") {
       return NextResponse.json({ message: "Unauthorized to delete this booking" }, { status: 403 });
     }
