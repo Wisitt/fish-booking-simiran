@@ -23,7 +23,7 @@ export async function GET() {
     const rawBookings = await prisma.booking.findMany();
 
     // Transform raw Prisma data to match Booking interface
-    const bookings: Booking[] = rawBookings.map((booking) => ({
+    const bookings: Booking[] = rawBookings.map((booking: any) => ({
       ...booking,
       dailyQuantities:
         typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
