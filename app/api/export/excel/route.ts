@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
-type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
 interface Booking {
   id: number;
@@ -35,11 +35,12 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Invalid weekNumber" }, { status: 400 });
       }
 
-      const rawBookings = await prisma.booking.findMany({
+      // Explicitly type `rawBookings` as `Booking[]`
+      const rawBookings: Booking[] = await prisma.booking.findMany({
         where: { weekNumber: selectedWeek },
       });
 
-      bookings = rawBookings.map((booking) => ({
+      bookings = rawBookings.map((booking: Booking) => ({
         ...booking,
         dailyQuantities:
           typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
@@ -47,9 +48,10 @@ export async function GET(req: Request) {
             : null,
       }));
     } else {
-      const rawBookings = await prisma.booking.findMany();
+      // Explicitly type `rawBookings` as `Booking[]`
+      const rawBookings: Booking[] = await prisma.booking.findMany();
 
-      bookings = rawBookings.map((booking) => ({
+      bookings = rawBookings.map((booking: Booking) => ({
         ...booking,
         dailyQuantities:
           typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
@@ -60,7 +62,7 @@ export async function GET(req: Request) {
 
     if (searchDateParam) {
       const searchDate = new Date(searchDateParam);
-      bookings = bookings.filter((booking) => {
+      bookings = bookings.filter((booking: Booking) => {
         const bookingDate = new Date(booking.createdAt);
         return bookingDate.toDateString() === searchDate.toDateString();
       });
@@ -68,13 +70,13 @@ export async function GET(req: Request) {
 
     const allDays = Array.from(
       new Set(
-        bookings.flatMap((booking) =>
+        bookings.flatMap((booking: Booking) =>
           booking.dailyQuantities ? Object.keys(booking.dailyQuantities as Record<string, number>) : []
         )
       )
     ).sort();
 
-    const data = bookings.map((booking) => {
+    const data = bookings.map((booking: Booking) => {
       const dailyQuantitiesData = allDays.reduce((acc: Record<string, number>, day) => {
         acc[day] = (booking.dailyQuantities as Record<string, number>)?.[day] || 0;
         return acc;
