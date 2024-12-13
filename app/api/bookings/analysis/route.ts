@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { PrismaClient, Prisma } from "@prisma/client";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
 interface BookingItem {
   fishType: string;
   createdAt: Date;
-  dailyQuantities: Prisma.JsonValue;
+  dailyQuantities: JsonValue;
   customerName: string | null;
 }
+
 
 export async function POST(req: Request) {
   try {
