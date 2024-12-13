@@ -7,13 +7,28 @@ const prisma = new PrismaClient();
 // Define `JsonValue` locally
 type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
-interface Booking {
+interface RawBooking {
   id: number;
   team: string;
   customerGroup: string;
   customerName: string;
   price: string;
   dailyQuantities: JsonValue; // Use the locally defined JsonValue type
+  fishSize: string;
+  fishType: string;
+  code: string;
+  createdAt: Date;
+  weekNumber: number;
+  userId: number;
+}
+
+interface Booking {
+  id: number;
+  team: string;
+  customerGroup: string;
+  customerName: string;
+  price: string;
+  dailyQuantities: Record<string, number> | null;
   fishSize: string;
   fishType: string;
   code: string;
@@ -36,11 +51,11 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Invalid weekNumber" }, { status: 400 });
       }
 
-      const rawBookings = await prisma.booking.findMany({
+      const rawBookings: RawBooking[] = await prisma.booking.findMany({
         where: { weekNumber: selectedWeek },
       });
 
-      bookings = rawBookings.map((booking) => ({
+      bookings = rawBookings.map((booking: RawBooking): Booking => ({
         ...booking,
         dailyQuantities:
           typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
@@ -48,9 +63,9 @@ export async function GET(req: Request) {
             : null,
       }));
     } else {
-      const rawBookings = await prisma.booking.findMany();
+      const rawBookings: RawBooking[] = await prisma.booking.findMany();
 
-      bookings = rawBookings.map((booking) => ({
+      bookings = rawBookings.map((booking: RawBooking): Booking => ({
         ...booking,
         dailyQuantities:
           typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
@@ -61,7 +76,7 @@ export async function GET(req: Request) {
 
     if (searchDateParam) {
       const searchDate = new Date(searchDateParam);
-      bookings = bookings.filter((booking) => {
+      bookings = bookings.filter((booking: Booking) => {
         const bookingDate = new Date(booking.createdAt);
         return bookingDate.toDateString() === searchDate.toDateString();
       });
@@ -69,15 +84,15 @@ export async function GET(req: Request) {
 
     const allDays = Array.from(
       new Set(
-        bookings.flatMap((booking) =>
-          booking.dailyQuantities ? Object.keys(booking.dailyQuantities as Record<string, number>) : []
+        bookings.flatMap((booking: Booking) =>
+          booking.dailyQuantities ? Object.keys(booking.dailyQuantities) : []
         )
       )
     ).sort();
 
-    const data = bookings.map((booking) => {
+    const data = bookings.map((booking: Booking) => {
       const dailyQuantitiesData = allDays.reduce((acc: Record<string, number>, day) => {
-        acc[day] = (booking.dailyQuantities as Record<string, number>)?.[day] || 0;
+        acc[day] = booking.dailyQuantities?.[day] || 0;
         return acc;
       }, {});
 
