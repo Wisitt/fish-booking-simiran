@@ -4,16 +4,17 @@ import * as XLSX from "xlsx";
 
 const prisma = new PrismaClient();
 
+
 interface Booking {
   id: number;
   team: string;
   customerGroup: string;
   customerName: string;
-  price: string; // Assuming price is stored as a string
-  dailyQuantities: Record<string, number> | null; // Adjusted to support null
+  price: string;
+  dailyQuantities: Record<string, number> | null; // Adjusted to a more specific type
   fishSize: string;
   fishType: string;
-  code: string; // Salesperson code
+  code: string;
   createdAt: Date;
   weekNumber: number;
   userId: number;
@@ -54,7 +55,6 @@ export async function GET(req: Request) {
       });
     }
 
-    // Construct a list of unique days
     const allDays = Array.from(
       new Set(
         bookings.flatMap((booking) =>
@@ -63,7 +63,6 @@ export async function GET(req: Request) {
       )
     ).sort();
 
-    // Transform bookings data into a format suitable for Excel
     const data = bookings.map((booking) => {
       const dailyQuantitiesData = allDays.reduce((acc: Record<string, number>, day) => {
         acc[day] = booking.dailyQuantities?.[day] || 0;
@@ -83,7 +82,6 @@ export async function GET(req: Request) {
       };
     });
 
-    // Create Excel workbook and sheet
     const ws = XLSX.utils.json_to_sheet(data, {
       header: ["พนักงาน", "Team", "กลุ่มลูกค้า", "ชื่อลูกค้า", "ขนาดปลา", "ราคา", ...allDays, "รวมสัปดาห์"],
     });
