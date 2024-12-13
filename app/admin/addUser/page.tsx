@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { CheckCircle, AlertTriangle } from "lucide-react";
 
 const AddUserPage = () => {
@@ -10,7 +9,6 @@ const AddUserPage = () => {
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const router = useRouter();
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();

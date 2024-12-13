@@ -14,8 +14,8 @@ import {
   Legend,
   BarElement,
 } from "chart.js";
-import { Line, Pie, Bar } from "react-chartjs-2";
-import { FaFish, FaUsers, FaChartLine, FaCalendarAlt } from "react-icons/fa";
+import { Line, Pie, } from "react-chartjs-2";
+import { FaFish, FaChartLine, FaCalendarAlt } from "react-icons/fa";
 
 ChartJS.register(
   CategoryScale,

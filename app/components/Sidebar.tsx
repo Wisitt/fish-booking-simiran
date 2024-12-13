@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "../styles/logo.module.css"; // Ensure you have this logo style or remove if unused
+import Image from 'next/image';
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -102,7 +104,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         <div className="flex flex-col items-center justify-center mt-14 mx-2 p-3 space-y-2 bg-white/40 rounded-xl backdrop-blur-md shadow-md border border-white/20">
           {/* Fish Logo */}
           <div className={`${styles["fish-logo"]} h-10 w-10`}>
-            <img src="/fish_logo.png" alt="Fish Logo" className="object-contain" />
+            <Image
+             src="/fish_logo.png" 
+             alt="Fish Logo" 
+             className="object-contain"
+             width={100} // Set appropriate width
+             height={100} // Set appropriate height
+             priority={true}
+              />
           </div>
           <h2
             className={`${

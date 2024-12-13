@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { NextResponse } from "next/server";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -18,10 +18,7 @@ export async function POST(req: Request) {
     }
 
     const userIdNum = Number(userId);
-    let filter: any = {};
-    if (role !== 'admin') {
-      filter = { userId: userIdNum };
-    }
+    const filter: Record<string, unknown> = role !== "admin" ? { userId: userIdNum } : {};
 
     const bookings: BookingItem[] = await prisma.booking.findMany({
       where: filter,
@@ -41,7 +38,7 @@ export async function POST(req: Request) {
     const weeklyBookings = processWeeklyBookings(bookings);
     const totalBookings = weeklyBookings.reduce((sum, w) => sum + w.totalQuantity, 0);
 
-    // Growth Rate (สัปดาห์ต่อสัปดาห์)
+    // Growth Rate (week-to-week)
     let growthRate = 0;
     if (weeklyBookings.length > 1) {
       const latest = weeklyBookings[weeklyBookings.length - 1].totalQuantity;
@@ -59,15 +56,15 @@ export async function POST(req: Request) {
     }
 
     // Most Popular Fish
-    const mostPopularFish = Object.keys(fishTotals).reduce((a, b) => fishTotals[a] > fishTotals[b] ? a : b);
+    const mostPopularFish = Object.keys(fishTotals).reduce((a, b) => (fishTotals[a] > fishTotals[b] ? a : b));
 
-    // Fish Ranking (พร้อม % share)
+    // Fish Ranking (with % share)
     const fishEntries = Object.entries(fishTotals);
     fishEntries.sort((a, b) => b[1] - a[1]);
     const fishRanking = fishEntries.map(([fish, total]) => ({
       fish,
       total,
-      share: (total / totalBookings) * 100
+      share: (total / totalBookings) * 100,
     }));
 
     // Customer Totals
@@ -82,13 +79,16 @@ export async function POST(req: Request) {
     customerEntries.sort((a, b) => b[1] - a[1]);
 
     // Top 3 Customers
-    const topCustomers = customerEntries.slice(0, 3).map(([customerName, totalQuantity]) => ({ customerName, totalQuantity }));
+    const topCustomers = customerEntries.slice(0, 3).map(([customerName, totalQuantity]) => ({
+      customerName,
+      totalQuantity,
+    }));
 
-    // Customer Distribution (สำหรับ Pie Chart แสดงสัดส่วน)
+    // Customer Distribution (for Pie Chart)
     const customerDistribution = customerEntries.map(([customerName, total]) => ({
       customerName,
       total,
-      share: (total / totalBookings) * 100
+      share: (total / totalBookings) * 100,
     }));
 
     // Monthly Breakdown (Seasonality)
@@ -102,19 +102,27 @@ export async function POST(req: Request) {
       weeklyBreakdown: weeklyBookings,
       fishRanking,
       customerDistribution,
-      monthlyBreakdown
+      monthlyBreakdown,
     };
 
     return NextResponse.json(result, { status: 200 });
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching data:", error);
-    return NextResponse.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }
 
 function processWeeklyBookings(bookings: BookingItem[]) {
-  const groupedByWeek: Record<number, { weekNumber: number; weekStart: string; weekEnd: string; totalQuantity: number }> = {};
+  const groupedByWeek: Record<
+    number,
+    { weekNumber: number; weekStart: string; weekEnd: string; totalQuantity: number }
+  > = {};
 
   for (const booking of bookings) {
     const weekNumber = getWeekNumber(new Date(booking.createdAt));
@@ -131,19 +139,17 @@ function processWeeklyBookings(bookings: BookingItem[]) {
     groupedByWeek[weekNumber].totalQuantity += totalForBooking;
   }
 
-  const sortedWeeks = Object.values(groupedByWeek).sort((a, b) => a.weekNumber - b.weekNumber);
-  return sortedWeeks;
+  return Object.values(groupedByWeek).sort((a, b) => a.weekNumber - b.weekNumber);
 }
 
 function processMonthlyBookings(bookings: BookingItem[]) {
-  // สมมติจะดูข้อมูลปีปัจจุบัน
   const year = new Date().getFullYear();
   const monthlyTotals: number[] = Array(12).fill(0);
 
   for (const booking of bookings) {
     const date = new Date(booking.createdAt);
     if (date.getFullYear() === year) {
-      const monthIndex = date.getMonth(); // 0-11
+      const monthIndex = date.getMonth();
       const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
       monthlyTotals[monthIndex] += totalForBooking;
     }
@@ -151,14 +157,18 @@ function processMonthlyBookings(bookings: BookingItem[]) {
 
   return monthlyTotals.map((total, index) => ({
     month: index + 1,
-    totalQuantity: total
+    totalQuantity: total,
   }));
 }
 
 function totalFromDailyQuantities(dailyQuantities: Prisma.JsonValue): number {
-  if (dailyQuantities && typeof dailyQuantities === 'object' && !Array.isArray(dailyQuantities)) {
+  if (
+    dailyQuantities &&
+    typeof dailyQuantities === "object" &&
+    !Array.isArray(dailyQuantities)
+  ) {
     const dq = dailyQuantities as Record<string, number>;
-    return Object.values(dq).reduce((sum, qty) => sum + Number(qty), 0);
+    return Object.values(dq).reduce((sum, qty) => sum + qty, 0);
   }
   return 0;
 }
@@ -173,12 +183,12 @@ function getWeekStartDate(weekNumber: number): string {
   const now = new Date();
   const firstDay = new Date(now.getFullYear(), 0, 1);
   firstDay.setDate(firstDay.getDate() + (weekNumber - 1) * 7);
-  return firstDay.toISOString().split('T')[0];
+  return firstDay.toISOString().split("T")[0];
 }
 
 function getWeekEndDate(weekNumber: number): string {
   const now = new Date();
   const firstDay = new Date(now.getFullYear(), 0, 1);
   firstDay.setDate(firstDay.getDate() + (weekNumber - 1) * 7 + 6);
-  return firstDay.toISOString().split('T')[0];
+  return firstDay.toISOString().split("T")[0];
 }

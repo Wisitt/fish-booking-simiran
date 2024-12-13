@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { he } from "date-fns/locale";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -108,9 +107,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
     }
   };
 
-  const handleSelectChange = (field: "fishSize" | "fishType", option: any) => {
+  const handleSelectChange = (
+    field: "fishSize" | "fishType",
+    option: { value: string; label: string }
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: option.value }));
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,7 +267,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 options={fishSizeOptions}
                 placeholder="Select size..."
                 value={fishSizeOptions.find((opt) => opt.value === formData.fishSize)}
-                onChange={(option) => handleSelectChange("fishSize", option)}
+                onChange={(option) => handleSelectChange("fishSize", option as { value: string; label: string })}
                 className="rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
               />
             </div>
@@ -277,7 +280,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 options={fishTypeOptions}
                 placeholder="Select type..."
                 value={fishTypeOptions.find((opt) => opt.value === formData.fishType)}
-                onChange={(option) => handleSelectChange("fishType", option)}
+                onChange={(option) => handleSelectChange("fishType", option as { value: string; label: string })}
                 className="rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
               />
             </div>

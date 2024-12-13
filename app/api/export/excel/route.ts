@@ -1,5 +1,3 @@
-// app/api/export/excel/route.ts
-
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
@@ -12,7 +10,7 @@ interface Booking {
   customerGroup: string;
   customerName: string;
   price: string; // Assuming price is stored as a string
-  dailyQuantities: Record<string, number> | null; // ปรับให้รองรับ null
+  dailyQuantities: Record<string, number> | null; // Adjusted to support null
   fishSize: string;
   fishType: string;
   code: string; // Salesperson code
@@ -37,9 +35,15 @@ export async function GET(req: Request) {
 
       bookings = (await prisma.booking.findMany({
         where: { weekNumber: selectedWeek },
-      })) as Booking[];
+      })).map((booking) => ({
+        ...booking,
+        dailyQuantities: booking.dailyQuantities as Record<string, number> | null,
+      }));
     } else {
-      bookings = (await prisma.booking.findMany()) as Booking[];
+      bookings = (await prisma.booking.findMany()).map((booking) => ({
+        ...booking,
+        dailyQuantities: booking.dailyQuantities as Record<string, number> | null,
+      }));
     }
 
     if (searchDateParam) {
@@ -50,35 +54,39 @@ export async function GET(req: Request) {
       });
     }
 
-    // สร้างโครงสร้างข้อมูลใหม่
+    // Construct a list of unique days
     const allDays = Array.from(
       new Set(
-        bookings.flatMap((booking) => 
+        bookings.flatMap((booking) =>
           booking.dailyQuantities ? Object.keys(booking.dailyQuantities) : []
         )
       )
     ).sort();
 
-    const data: any[] = bookings.map((booking) => {
-      const dailyQuantitiesData = allDays.reduce((acc: any, day) => {
+    // Transform bookings data into a format suitable for Excel
+    const data = bookings.map((booking) => {
+      const dailyQuantitiesData = allDays.reduce((acc: Record<string, number>, day) => {
         acc[day] = booking.dailyQuantities?.[day] || 0;
         return acc;
       }, {});
 
       return {
-        "พนักงาน": booking.code,
+        พนักงาน: booking.code,
         Team: booking.team,
-        "กลุ่มลูกค้า": booking.customerGroup,
-        "ชื่อลูกค้า": booking.customerName,
-        "ขนาดปลา": booking.fishSize,
-        "ประเภทปลา": booking.fishType,
-        "ราคา": booking.price,
+        กลุ่มลูกค้า: booking.customerGroup,
+        ชื่อลูกค้า: booking.customerName,
+        ขนาดปลา: booking.fishSize,
+        ประเภทปลา: booking.fishType,
+        ราคา: booking.price,
         ...dailyQuantitiesData,
-        "รวมสัปดาห์": Object.values(dailyQuantitiesData).reduce((sum: number, qty) => sum + Number(qty), 0),
+        รวมสัปดาห์: Object.values(dailyQuantitiesData).reduce((sum, qty) => sum + qty, 0),
       };
     });
 
-    const ws = XLSX.utils.json_to_sheet(data, { header: ["พนักงาน", "Team", "กลุ่มลูกค้า", "ชื่อลูกค้า", "ขนาดปลา", "ราคา", ...allDays, "รวมสัปดาห์"] });
+    // Create Excel workbook and sheet
+    const ws = XLSX.utils.json_to_sheet(data, {
+      header: ["พนักงาน", "Team", "กลุ่มลูกค้า", "ชื่อลูกค้า", "ขนาดปลา", "ราคา", ...allDays, "รวมสัปดาห์"],
+    });
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Booking Report");
 
@@ -95,4 +103,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Failed to generate Excel file" }, { status: 500 });
   }
 }
-

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaCalendarAlt, FaDownload, FaTable } from "react-icons/fa";
+import { FaDownload, FaTable } from "react-icons/fa";
 
 interface Booking {
   code: string;
@@ -20,7 +20,7 @@ interface Booking {
 
 const SummaryTable = () => {
   const [summary, setSummary] = useState<Booking[]>([]);
-  const [weeks, setWeeks] = useState<number[]>([]);
+  // const [weeks, setWeeks] = useState<number[]>([]);
   const [mode, setMode] = useState<"all" | "select">("all");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
@@ -61,10 +61,10 @@ const SummaryTable = () => {
   
         setSummary(updatedData);
   
-        const uniqueWeeks = Array.from(new Set(updatedData.map((item) => item.weekNumber))).sort(
-          (a, b) => a - b
-        );
-        setWeeks(uniqueWeeks);
+        // const uniqueWeeks = Array.from(new Set(updatedData.map((item) => item.weekNumber))).sort(
+        //   (a, b) => a - b
+        // );
+        // setWeeks(uniqueWeeks);
       } catch (error) {
         console.error("Error fetching summary:", error);
       }
