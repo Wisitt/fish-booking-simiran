@@ -1,21 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Trash2, AlertTriangle, CheckCircle } from "lucide-react";
 
 const DeleteUserPage = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await fetch("/api/admin/getUsers");
         const data = await response.json();
-        setUsers(data); // Assuming users data comes in a list of user objects
+        setUsers(data);
+        setIsLoading(false);
       } catch (error) {
         setError("Failed to fetch users");
+        setIsLoading(false);
       }
     };
     fetchUsers();
@@ -45,51 +49,110 @@ const DeleteUserPage = () => {
       }
 
       setSuccessMessage('User deleted successfully!');
-      setUsers(users.filter((user: any) => user.id !== selectedUser)); // Remove user from list
+      setUsers(users.filter((user: any) => user.id !== selectedUser));
     } catch (error) {
       setError("Failed to delete user. Please try again.");
     }
   };
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">Delete User</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
-      
-      <form onSubmit={handleDeleteUser} className="space-y-6">
-        <table className="min-w-full table-auto bg-white border-collapse shadow-md rounded-lg">
-          <thead className="bg-blue-100">
-            <tr>
-              <th className="px-6 py-3 text-sm font-medium text-left text-gray-600 border-b">Select</th>
-              <th className="px-6 py-3 text-sm font-medium text-left text-gray-600 border-b">Email</th>
-              <th className="px-6 py-3 text-sm font-medium text-left text-gray-600 border-b">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user: any) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-800 border-b">
-                  <input
-                    type="radio"
-                    name="user"
-                    value={user.id}
-                    onChange={() => setSelectedUser(user.id)}
-                    className="cursor-pointer"
-                  />
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-800 border-b">{user.email}</td>
-                <td className="px-6 py-4 text-sm text-gray-800 border-b">{user.role}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="mt-4">
-          <button type="submit" className="w-full bg-red-600 text-white py-3 rounded-md">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl overflow-hidden">
+        <div className="bg-gradient-to-r from-red-500 to-red-700 p-6">
+          <h1 className="text-3xl font-bold text-center text-white flex items-center justify-center">
+            <Trash2 className="mr-3 w-8 h-8" />
             Delete User
-          </button>
+          </h1>
         </div>
-      </form>
+
+        <div className="p-8">
+          {error && (
+            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg flex items-center mb-6">
+              <AlertTriangle className="mr-3 w-6 h-6" />
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded-lg flex items-center mb-6">
+              <CheckCircle className="mr-3 w-6 h-6" />
+              <p className="text-sm">{successMessage}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleDeleteUser} className="space-y-6">
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-red-600 rounded-full">
+                  <span className="sr-only">Loading...</span>
+                </div>
+              </div>
+            ) : users.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                No users found
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-red-50">
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Select</th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Username</th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Role</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user: any) => (
+                      <tr 
+                        key={user.id} 
+                        className={`hover:bg-red-50 transition duration-300 ${
+                          selectedUser === user.id ? 'bg-red-100' : ''
+                        }`}
+                      >
+                        <td className="px-6 py-4 text-sm text-gray-800 border-b">
+                          <input
+                            type="radio"
+                            name="user"
+                            value={user.id}
+                            onChange={() => setSelectedUser(user.id)}
+                            className="form-radio text-red-600 focus:ring-red-500"
+                          />
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 border-b">{user.email}</td>
+                        <td className="px-6 py-4 text-sm text-gray-800 border-b">
+                          <span className={`
+                            px-2 py-1 rounded-full text-xs font-medium
+                            ${user.role === 'admin' 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-blue-100 text-blue-800'
+                            }
+                          `}>
+                            {user.role}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <button 
+                type="submit" 
+                disabled={!selectedUser}
+                className="w-full bg-red-600 text-white py-3 rounded-lg 
+                  hover:bg-red-700 transition duration-300 
+                  transform hover:scale-105 focus:outline-none 
+                  focus:ring-2 focus:ring-red-500 
+                  disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Delete User
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

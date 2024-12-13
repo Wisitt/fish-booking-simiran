@@ -1,4 +1,3 @@
-// app/booking/page.tsx 
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -23,11 +22,11 @@ const BookingPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [code, setCode] = useState("");
 
-  const firstInputRef = useRef<HTMLInputElement | null>(null); // Create ref for the first input
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const userId = localStorage.getItem("userId"); // Get userId from localStorage
+      const userId = localStorage.getItem("userId"); 
       if (!userId) {
         alert("User not logged in.");
         return;
@@ -37,8 +36,8 @@ const BookingPage = () => {
         method: "GET",
         headers: {
           "email": "",
-          "role": "user", // Set role
-          "userId": userId, // Pass userId in the header or body to the API
+          "role": "user",
+          "userId": userId, 
         },
       });
   
@@ -47,15 +46,13 @@ const BookingPage = () => {
       }
   
       const data = await response.json();
-      setBookings(data); // Set bookings data to state
+      setBookings(data); 
     };
   
     fetchBookings();
   }, []);
-  
-  
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = (id: number) => {
     setDeletingBooking(bookings.find((booking) => booking.id === id) || null);
     setShowModal(true);
   };
@@ -102,22 +99,26 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">Fish Booking System</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-6 font-sans">
+      <h1 className="text-4xl font-extrabold mb-6 text-center text-blue-700 drop-shadow-sm">
+        Fish Booking System
+      </h1>
 
-      <BookingForm
-        setBookings={setBookings}
-        editingBooking={editingBooking}
-        clearEditingBooking={clearEditingBooking}
-        firstInputRef={firstInputRef} // Pass ref to the form
-      />
+      <div className="max-w-5xl mx-auto mb-10">
+        <BookingForm
+          setBookings={setBookings}
+          editingBooking={editingBooking}
+          clearEditingBooking={clearEditingBooking}
+          firstInputRef={firstInputRef}
+        />
+      </div>
 
-      <h2 className="text-2xl font-semibold mt-10 mb-4 text-blue-500">Your Bookings</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-blue-600">Your Bookings</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bookings.map((booking) => (
           <div
             key={booking.id}
-            className="border p-4 rounded-lg shadow-md bg-gray-50 flex flex-col space-y-4"
+            className="border border-white/30 p-4 rounded-xl shadow-md bg-white/70 backdrop-blur-sm flex flex-col space-y-4 transform hover:scale-[1.02] transition-transform duration-300"
           >
             <div className="font-bold text-lg text-blue-700">{booking.code}</div>
             <div className="text-sm text-gray-700">
@@ -140,10 +141,10 @@ const BookingPage = () => {
             </div>
             <div className="text-sm text-gray-700">
               <span className="font-medium">Daily Quantities:</span>
-              <ul>
+              <ul className="ml-4 list-disc list-inside">
                 {Object.entries(booking.dailyQuantities).map(([day, qty]) => (
                   <li key={day}>
-                    {day}: {qty} fish
+                    <span className="text-gray-600">{day}</span>: {qty} fish
                   </li>
                 ))}
               </ul>
@@ -151,13 +152,13 @@ const BookingPage = () => {
             <div className="flex justify-between space-x-4 mt-4">
               <button
                 onClick={() => handleEdit(booking)}
-                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition duration-300"
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(booking.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
               >
                 Delete
               </button>
@@ -167,9 +168,9 @@ const BookingPage = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-xl font-semibold mb-4">Confirm Deletion</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 p-4">
+          <div className="bg-white/90 backdrop-blur-xl p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Confirm Deletion</h2>
             <p className="text-gray-700 mb-4">Please enter the secret code to delete the booking.</p>
 
             <input
@@ -177,7 +178,7 @@ const BookingPage = () => {
               value={code}
               onChange={handleCodeChange}
               placeholder="Enter code"
-              className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
 
             <div className="flex justify-between space-x-4">

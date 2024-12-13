@@ -1,30 +1,17 @@
+// app/api/summary/route.ts
+
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface Booking {
-  id: number;
-  team: string;
-  customerGroup: string;
-  customerName: string;
-  price: string; // Assuming price is stored as a string
-  dailyQuantities: Record<string, number> | null; // dailyQuantities can be null
-  fishSize: string;
-  fishType: string;
-  code: string; // Salesperson code
-  createdAt: Date;
-}
-
 export async function GET() {
   try {
-    // Fetch all bookings from the database
     const bookings = await prisma.booking.findMany();
 
-    // Generate the summary
     const summary = bookings.map((booking) => {
       const totalQuantity = booking.dailyQuantities
-        ? Object.values(booking.dailyQuantities).reduce((sum, qty) => sum + qty, 0)
+        ? Object.values(booking.dailyQuantities).reduce((sum, qty) => sum + Number(qty), 0)
         : 0;
 
       return {
@@ -33,6 +20,8 @@ export async function GET() {
         team: booking.team,
         fishSize: booking.fishSize,
         totalQuantity,
+        weekNumber: booking.weekNumber,
+        createdAt: booking.createdAt, // ส่งวันที่สร้างด้วย
       };
     });
 

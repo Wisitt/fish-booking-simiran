@@ -45,9 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body className="flex flex-col sm:flex-row">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
-        <div className={`flex-1 overflow-auto transition-all ${isSidebarOpen ? "ml-64" : "ml-16"}`}>
+      <body className="h-screen w-screen overflow-hidden bg-gradient-to-b from-sky-200 via-sky-400 to-sky-300  flex">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
+        <div className={`flex-1 overflow-auto transition-all ${isSidebarOpen ? "ml-0" : "ml-0"}`}>
           {children}
         </div>
       </body>

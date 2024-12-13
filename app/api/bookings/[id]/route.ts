@@ -1,19 +1,19 @@
-// app/api/bookings/[id].ts
-
+// app/api/bookings/[id]/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Example API handler for PUT method
+// PUT: อัพเดท booking ตาม id
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const bookingId = Number(params.id);  // Convert string to number
-
+  const bookingId = Number(params.id);
   const body = await req.json();
 
-  if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price) {
+  if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.userId) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
+
+  const userIdNum = Number(body.userId);
 
   try {
     const updatedBooking = await prisma.booking.update({
@@ -26,8 +26,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         fishSize: body.fishSize,
         fishType: body.fishType,
         price: body.price,
-        dailyQuantities: body.dailyQuantities, // Ensure dailyQuantities is passed correctly
-        userId: body.userId, // Make sure userId is passed for the update
+        dailyQuantities: body.dailyQuantities,
+        userId: userIdNum,
       },
     });
 
@@ -38,34 +38,35 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
+// DELETE: ลบ booking ตาม id โดยตรวจสอบ email จาก header
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    const email = req.headers.get("email");
-    if (!email) {
-      return NextResponse.json({ message: "Email header is missing" }, { status: 400 });
-    }
-    const bookingId = Number(params.id);
-  
-    try {
-      const booking = await prisma.booking.findUnique({
-        where: { id: bookingId },
-      });
-  
-      if (!booking) {
-        return NextResponse.json({ message: "Booking not found" }, { status: 404 });
-      }
-  
-      const user = await prisma.user.findUnique({ where: { email } });
-  
-      if (user && booking.userId !== user.id && user.role !== "admin") {
-        return NextResponse.json({ message: "Unauthorized to delete this booking" }, { status: 403 });
-      }
-  
-      await prisma.booking.delete({ where: { id: bookingId } });
-  
-      return NextResponse.json({ message: "Booking deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-      return NextResponse.json({ message: "Error deleting booking" }, { status: 500 });
-    }
+  const email = req.headers.get("email");
+  const bookingId = Number(params.id);
+
+  if (!email) {
+    return NextResponse.json({ message: "Email header is missing" }, { status: 400 });
   }
-  
+
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
+
+    if (!booking) {
+      return NextResponse.json({ message: "Booking not found" }, { status: 404 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    // ถ้าผู้ใช้ไม่ใช่เจ้าของ booking และไม่ใช่ admin จะลบไม่ได้
+    if (user && booking.userId !== user.id && user.role !== "admin") {
+      return NextResponse.json({ message: "Unauthorized to delete this booking" }, { status: 403 });
+    }
+
+    await prisma.booking.delete({ where: { id: bookingId } });
+    return NextResponse.json({ message: "Booking deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    return NextResponse.json({ message: "Error deleting booking" }, { status: 500 });
+  }
+}

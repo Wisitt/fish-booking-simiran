@@ -14,9 +14,10 @@ model Booking {
   customerGroup  String
   customerName   String
   price          String
-  dailyQuantities Json
+  dailyQuantities Json    @default("{}")
   fishSize       String
   fishType       String
+  weekNumber Int @default(0)
   createdAt      DateTime @default(now())
   userId         Int      // Relation to User
   user           User     @relation(fields: [userId], references: [id])
