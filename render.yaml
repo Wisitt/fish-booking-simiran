@@ -11,12 +11,6 @@ services:
       npm start
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:nRiylheTCmWRYkpQqkLOPpWsocuSJeUx@autorack.proxy.rlwy.net:21674/railway
+        value: postgresql://postgres:nRiylheTCmWRYkpQqkLOPpWsocuSJeUx@${RAILWAY_PRIVATE_DOMAIN}:5432/railway
       - key: NODE_ENV
         value: production
-    plan: free
-    region: us-west1
-
-  - name: fish-booking-database
-    type: postgres
-    plan: free
