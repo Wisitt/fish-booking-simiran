@@ -2,17 +2,21 @@ services:
   - name: fish-booking-app
     type: web
     env: node
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: |
+      npm install --force
+      npx prisma generate
+      npm run build
+    startCommand: |
+      npx prisma migrate deploy
+      npm start
     envVars:
       - key: DATABASE_URL
-        value: your_database_url_here
+        value: postgresql://postgres:nRiylheTCmWRYkpQqkLOPpWsocuSJeUx@autorack.proxy.rlwy.net:21674/railway
       - key: NODE_ENV
         value: production
-    plan: free # ใช้แผนฟรีหรือกำหนดแผนที่ต้องการ
+    plan: free
     region: us-west1
-
 
   - name: fish-booking-database
     type: postgres
-    plan: free # Or "starter", "standard", etc.
+    plan: free
