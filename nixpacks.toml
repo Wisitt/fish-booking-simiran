@@ -4,9 +4,7 @@ cache = true
 [phases.build]
 cache = true
 command = "npm install --force && npx prisma generate && npm run build"
+cacheDirectories = ["node_modules", "prisma/generated", ".next"]
 
 [phases.start]
 command = "npx prisma migrate deploy && npm start"
-
-[build]
-cacheDirectories = ["node_modules", "prisma/generated", ".next"]
