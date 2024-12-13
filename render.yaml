@@ -1,0 +1,18 @@
+services:
+  - name: fish-booking-app
+    type: web
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: DATABASE_URL
+        value: your_database_url_here
+      - key: NODE_ENV
+        value: production
+    plan: free # ใช้แผนฟรีหรือกำหนดแผนที่ต้องการ
+    region: us-west1
+
+
+  - name: fish-booking-database
+    type: postgres
+    plan: free # Or "starter", "standard", etc.
