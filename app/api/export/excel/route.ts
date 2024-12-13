@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 
 const prisma = new PrismaClient();
 
+type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
 interface Booking {
   id: number;
@@ -11,9 +12,9 @@ interface Booking {
   customerGroup: string;
   customerName: string;
   price: string;
-  dailyQuantities: Record<string, number> | null; // Adjusted to a more specific type
+  dailyQuantities: JsonValue; // Match Prisma's JSON type
   fishSize: string;
-  fishType: string; 
+  fishType: string;
   code: string;
   createdAt: Date;
   weekNumber: number;
@@ -34,16 +35,26 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Invalid weekNumber" }, { status: 400 });
       }
 
-      bookings = (await prisma.booking.findMany()).map((booking) => ({
+      const rawBookings = await prisma.booking.findMany({
+        where: { weekNumber: selectedWeek },
+      });
+
+      bookings = rawBookings.map((booking) => ({
         ...booking,
-        dailyQuantities: booking.dailyQuantities as Record<string, number> | null,
+        dailyQuantities:
+          typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
+            ? (booking.dailyQuantities as Record<string, number>)
+            : null,
       }));
-      
-      
     } else {
-      bookings = (await prisma.booking.findMany()).map((booking) => ({
+      const rawBookings = await prisma.booking.findMany();
+
+      bookings = rawBookings.map((booking) => ({
         ...booking,
-        dailyQuantities: booking.dailyQuantities as Record<string, number> | null,
+        dailyQuantities:
+          typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
+            ? (booking.dailyQuantities as Record<string, number>)
+            : null,
       }));
     }
 
@@ -58,14 +69,14 @@ export async function GET(req: Request) {
     const allDays = Array.from(
       new Set(
         bookings.flatMap((booking) =>
-          booking.dailyQuantities ? Object.keys(booking.dailyQuantities) : []
+          booking.dailyQuantities ? Object.keys(booking.dailyQuantities as Record<string, number>) : []
         )
       )
     ).sort();
 
     const data = bookings.map((booking) => {
       const dailyQuantitiesData = allDays.reduce((acc: Record<string, number>, day) => {
-        acc[day] = booking.dailyQuantities?.[day] || 0;
+        acc[day] = (booking.dailyQuantities as Record<string, number>)?.[day] || 0;
         return acc;
       }, {});
 
