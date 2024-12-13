@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt"; // Import bcrypt for password hashing
+import bcrypt from "bcryptjs"; // Switch to bcryptjs
 
 const prisma = new PrismaClient();
-const ALLOWED_ROLES = ["admin", "user"]; // Define allowed roles
+const ALLOWED_ROLES = ["admin", "user"];
 
 export async function POST(req: Request) {
   try {
     const { email, password, role } = await req.json();
 
-    // Validate required fields
     if (!email || !password || !role) {
       return NextResponse.json(
         { message: "Email, password, and role are required." },
@@ -17,7 +16,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate role
     if (!ALLOWED_ROLES.includes(role)) {
       return NextResponse.json(
         { message: "Invalid role. Please select either 'admin' or 'user'." },
@@ -25,7 +23,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the email already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return NextResponse.json(
@@ -34,21 +31,19 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash the password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Create a new user in the database
     const newUser = await prisma.user.create({
       data: {
         email,
-        passwordHash, // Store the hashed password
+        passwordHash,
         role,
       },
     });
 
     return NextResponse.json({
       message: "User added successfully!",
-      user: { id: newUser.id, email: newUser.email, role: newUser.role }, // Return essential details only
+      user: { id: newUser.id, email: newUser.email, role: newUser.role },
     });
   } catch (error: unknown) {
     console.error("Error adding user:", error);
