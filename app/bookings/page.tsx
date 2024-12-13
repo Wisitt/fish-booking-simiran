@@ -18,75 +18,51 @@ interface Booking {
 const BookingPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
-  const [deletingBooking, setDeletingBooking] = useState<Booking | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [code, setCode] = useState("");
-
   const firstInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const userId = localStorage.getItem("userId"); 
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         alert("User not logged in.");
         return;
       }
-  
+
       const response = await fetch("/api/bookings", {
         method: "GET",
         headers: {
           "email": "",
           "role": "user",
-          "userId": userId, 
+          "userId": userId,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to fetch bookings: ${response.statusText}`);
       }
-  
+
       const data = await response.json();
-      setBookings(data); 
+      setBookings(data);
     };
-  
+
     fetchBookings();
   }, []);
 
-  const handleDelete = (id: number) => {
-    setDeletingBooking(bookings.find((booking) => booking.id === id) || null);
-    setShowModal(true);
-  };
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/bookings?id=${id}`, {
+        method: "DELETE",
+      });
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setCode("");
-  };
-
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCode(e.target.value);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (code === "edok" || code === "dogfuse" || code === "wisit") {
-      try {
-        const response = await fetch(`/api/bookings?id=${deletingBooking?.id}&code=${code}`, {
-          method: "DELETE",
-        });
-
-        if (response.ok) {
-          setBookings(bookings.filter((booking) => booking.id !== deletingBooking?.id));
-          alert("Booking deleted successfully!");
-        } else {
-          alert("Invalid code. Deletion not authorized.");
-        }
-      } catch (error) {
-        console.error("Error deleting booking:", error);
+      if (response.ok) {
+        setBookings(bookings.filter((booking) => booking.id !== id));
+        alert("Booking deleted successfully!");
+      } else {
         alert("Error deleting booking.");
-      } finally {
-        handleCloseModal();
       }
-    } else {
-      alert("Incorrect code. Please try again.");
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      alert("Error deleting booking.");
     }
   };
 
@@ -166,38 +142,6 @@ const BookingPage = () => {
           </div>
         ))}
       </div>
-
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 p-4">
-          <div className="bg-white/90 backdrop-blur-xl p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Confirm Deletion</h2>
-            <p className="text-gray-700 mb-4">Please enter the secret code to delete the booking.</p>
-
-            <input
-              type="text"
-              value={code}
-              onChange={handleCodeChange}
-              placeholder="Enter code"
-              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            />
-
-            <div className="flex justify-between space-x-4">
-              <button
-                onClick={handleConfirmDelete}
-                className="w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none transition duration-300"
-              >
-                Confirm
-              </button>
-              <button
-                onClick={handleCloseModal}
-                className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-md hover:bg-gray-400 focus:outline-none transition duration-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

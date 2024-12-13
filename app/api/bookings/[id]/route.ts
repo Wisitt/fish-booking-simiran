@@ -3,21 +3,16 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// PUT: Update booking by ID
-export async function PUT(req: Request, context: { params: { id: string } }) {
-  const { params } = context;
-  const bookingId = Number(params.id);
+export async function PUT(req: Request) {
   const body = await req.json();
 
   if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.userId) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const userIdNum = Number(body.userId);
-
   try {
     const updatedBooking = await prisma.booking.update({
-      where: { id: bookingId },
+      where: { id: Number(body.id) },
       data: {
         code: body.code,
         team: body.team,
@@ -27,7 +22,7 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
         fishType: body.fishType,
         price: body.price,
         dailyQuantities: body.dailyQuantities,
-        userId: userIdNum,
+        userId: Number(body.userId),
       },
     });
 
@@ -38,36 +33,19 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
   }
 }
 
-// DELETE: Delete booking by ID with email verification
-export async function DELETE(req: Request, context: { params: { id: string } }) {
-  const { params } = context;
-  const email = req.headers.get("email");
-  const bookingId = Number(params.id);
-
-  if (!email) {
-    return NextResponse.json({ message: "Email header is missing" }, { status: 400 });
-  }
-
-  try {
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-    });
-
-    if (!booking) {
-      return NextResponse.json({ message: "Booking not found" }, { status: 404 });
+export async function DELETE(req: Request) {
+    try {
+      const url = new URL(req.url);
+      const id = url.searchParams.get("id");
+  
+      if (!id) {
+        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+      }
+  
+      await prisma.booking.delete({ where: { id: parseInt(id, 10) } });
+      return NextResponse.json({ message: "Booking deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
-
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    // If the user is not the owner and not an admin, deny deletion
-    if (user && booking.userId !== user.id && user.role !== "admin") {
-      return NextResponse.json({ message: "Unauthorized to delete this booking" }, { status: 403 });
-    }
-
-    await prisma.booking.delete({ where: { id: bookingId } });
-    return NextResponse.json({ message: "Booking deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting booking:", error);
-    return NextResponse.json({ message: "Error deleting booking" }, { status: 500 });
   }
-}

@@ -89,16 +89,9 @@ export async function DELETE(req: Request) {
   try {
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
-    const code = url.searchParams.get("code");
 
     if (!id) {
       return NextResponse.json({ error: "Missing ID" }, { status: 400 });
-    }
-
-    // ตรวจสอบ code ก่อนลบ (ตัวอย่างจาก logic เดิม)
-    const validCodes = ["edok", "dogfuse", "wisit"];
-    if (!code || !validCodes.includes(code)) {
-      return NextResponse.json({ error: "Invalid code. Deletion not authorized." }, { status: 403 });
     }
 
     await prisma.booking.delete({ where: { id: parseInt(id, 10) } });
@@ -108,3 +101,5 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
+
