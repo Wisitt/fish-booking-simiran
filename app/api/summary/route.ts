@@ -1,17 +1,31 @@
-// app/api/summary/route.ts
-
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
+interface Booking {
+  id: number;
+  code: string;
+  customerName: string;
+  team: string;
+  fishSize: string;
+  dailyQuantities: JsonValue; // Use Prisma's JsonValue
+  weekNumber: number;
+  createdAt: Date;
+}
+
 export async function GET() {
   try {
-    const bookings = await prisma.booking.findMany();
+    // Explicitly type `bookings` as `Booking[]`
+    const bookings: Booking[] = await prisma.booking.findMany();
 
-    const summary = bookings.map((booking) => {
+    const summary = bookings.map((booking: Booking) => {
       const totalQuantity = booking.dailyQuantities
-        ? Object.values(booking.dailyQuantities).reduce((sum, qty) => sum + Number(qty), 0)
+        ? Object.values(booking.dailyQuantities as Record<string, number>).reduce(
+            (sum, qty) => sum + Number(qty),
+            0
+          )
         : 0;
 
       return {
@@ -21,7 +35,7 @@ export async function GET() {
         fishSize: booking.fishSize,
         totalQuantity,
         weekNumber: booking.weekNumber,
-        createdAt: booking.createdAt, // ส่งวันที่สร้างด้วย
+        createdAt: booking.createdAt, // Include the creation date
       };
     });
 
