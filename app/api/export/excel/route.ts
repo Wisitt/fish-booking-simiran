@@ -13,7 +13,7 @@ interface Booking {
   price: string;
   dailyQuantities: Record<string, number> | null; // Adjusted to a more specific type
   fishSize: string;
-  fishType: string;
+  fishType: string; 
   code: string;
   createdAt: Date;
   weekNumber: number;
@@ -34,12 +34,12 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Invalid weekNumber" }, { status: 400 });
       }
 
-      bookings = (await prisma.booking.findMany({
-        where: { weekNumber: selectedWeek },
-      })).map((booking) => ({
+      bookings = (await prisma.booking.findMany()).map((booking) => ({
         ...booking,
         dailyQuantities: booking.dailyQuantities as Record<string, number> | null,
       }));
+      
+      
     } else {
       bookings = (await prisma.booking.findMany()).map((booking) => ({
         ...booking,
