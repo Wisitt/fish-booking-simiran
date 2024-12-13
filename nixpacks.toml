@@ -3,7 +3,7 @@ cache = true
 
 [phases.build]
 cache = true
-command = "npx prisma generate && npm run build"
+command = "npm install && npx prisma generate && npm run build"
 
 [phases.start]
 command = "npx prisma migrate deploy && npm start"
