@@ -30,8 +30,13 @@ export async function POST(req: Request) {
       },
     });
 
-    // Transform raw Prisma `dailyQuantities` (JsonValue) into `Record<string, number> | null`
-    const bookings: BookingItem[] = rawBookings.map((booking) => ({
+    // Explicitly annotate the type of `booking` in the `.map` function
+    const bookings: BookingItem[] = rawBookings.map((booking: {
+      fishType: string;
+      createdAt: Date;
+      dailyQuantities: unknown;
+      customerName: string | null;
+    }) => ({
       fishType: booking.fishType,
       createdAt: booking.createdAt,
       customerName: booking.customerName,
