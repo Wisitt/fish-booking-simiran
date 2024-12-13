@@ -3,7 +3,10 @@ cache = true
 
 [phases.build]
 cache = true
-command = "npm install --force && npx prisma generate && npm run build"
+command = "echo 'Starting Build Phase'; npm install --force && npx prisma generate && npm run build"
 
 [phases.start]
-command = "npx prisma migrate deploy && npm start"
+command = "echo 'Starting Start Phase'; npx prisma migrate deploy && npm start"
+
+[build]
+engine = "nodejs"
