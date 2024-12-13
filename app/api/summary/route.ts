@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Define JsonValue locally
-type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
 interface Booking {
   id: number;
@@ -12,7 +11,7 @@ interface Booking {
   customerName: string;
   team: string;
   fishSize: string;
-  dailyQuantities: JsonValue;
+  dailyQuantities: Record<string, number> | null;
   weekNumber: number;
   createdAt: Date;
 }
@@ -23,20 +22,23 @@ export async function GET() {
     const rawBookings = await prisma.booking.findMany();
 
     // Transform raw Prisma data to match Booking interface
-    const bookings: Booking[] = rawBookings.map((booking: any) => ({
-      ...booking,
+    const bookings: Booking[] = rawBookings.map((booking) => ({
+      id: booking.id,
+      code: booking.code,
+      customerName: booking.customerName,
+      team: booking.team,
+      fishSize: booking.fishSize,
       dailyQuantities:
         typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
           ? (booking.dailyQuantities as Record<string, number>)
           : null,
+      weekNumber: booking.weekNumber,
+      createdAt: booking.createdAt,
     }));
 
     const summary = bookings.map((booking) => {
       const totalQuantity = booking.dailyQuantities
-        ? Object.values(booking.dailyQuantities as Record<string, number>).reduce(
-            (sum, qty) => sum + Number(qty),
-            0
-          )
+        ? Object.values(booking.dailyQuantities).reduce((sum, qty) => sum + Number(qty), 0)
         : 0;
 
       return {
