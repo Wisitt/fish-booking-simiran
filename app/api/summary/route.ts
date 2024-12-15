@@ -1,28 +1,26 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Booking as PrismaBooking } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
-// Define JsonValue locally
 
 interface Booking {
   id: number;
   code: string;
-  customerName: string;
-  team: string;
-  fishSize: string;
+  customerName: string | null;
+  team: string | null;
+  fishSize: string | null;
   dailyQuantities: Record<string, number> | null;
-  weekNumber: number;
+  weekNumber: number | null;
   createdAt: Date;
 }
 
 export async function GET() {
   try {
     // Fetch bookings from Prisma
-    const rawBookings = await prisma.booking.findMany();
+    const rawBookings: PrismaBooking[] = await prisma.booking.findMany();
 
     // Transform raw Prisma data to match Booking interface
-    const bookings: Booking[] = rawBookings.map((booking) => ({
+    const bookings: Booking[] = rawBookings.map((booking: PrismaBooking): Booking => ({
       id: booking.id,
       code: booking.code,
       customerName: booking.customerName,
@@ -48,7 +46,7 @@ export async function GET() {
         fishSize: booking.fishSize,
         totalQuantity,
         weekNumber: booking.weekNumber,
-        createdAt: booking.createdAt, // Include the creation date
+        createdAt: booking.createdAt,
       };
     });
 

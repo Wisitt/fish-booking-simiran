@@ -92,7 +92,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
       });
       if (firstInputRef.current) firstInputRef.current.focus();
     }
-  }, [editingBooking]);
+  }, [editingBooking,firstInputRef]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
