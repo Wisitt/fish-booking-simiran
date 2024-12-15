@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
-// Define JsonValue locally
-type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
 interface BookingItem {
   fishType: string;
   createdAt: Date;
-  dailyQuantities: JsonValue;
+  dailyQuantities: Prisma.JsonValue;
   customerName: string | null;
 }
 
@@ -147,8 +144,8 @@ function processMonthlyBookings(bookings: BookingItem[]) {
   return monthlyTotals.map((total, index) => ({ month: index + 1, totalQuantity: total }));
 }
 
-function totalFromDailyQuantities(dailyQuantities: JsonValue): number {
-  if (dailyQuantities && typeof dailyQuantities === "object" && !Array.isArray(dailyQuantities)) {
+function totalFromDailyQuantities(dailyQuantities: Prisma.JsonValue): number {
+  if (typeof dailyQuantities === "object" && dailyQuantities !== null && !Array.isArray(dailyQuantities)) {
     const dq = dailyQuantities as Record<string, number>;
     return Object.values(dq).reduce((sum, qty) => sum + qty, 0);
   }
