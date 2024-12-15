@@ -127,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
             href="/"
             className={`flex items-center ${
               isOpen ? "px-4 py-2" : "p-2 justify-center"
-            } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+            } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
           >
             {HomeIcon}
             <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Home</span>
@@ -139,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 href="/admin/dashboard"
                 className={`flex items-center ${
                   isOpen ? "px-4 py-2" : "p-2 justify-center"
-                } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+                } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
               >
                 {DashboardIcon}
                 <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Dashboard</span>
@@ -148,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 href="/admin/bookings"
                 className={`flex items-center ${
                   isOpen ? "px-4 py-2" : "p-2 justify-center"
-                } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+                } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
               >
                 {BookingIcon}
                 <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Booking System</span>
@@ -157,7 +157,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 href="/admin/addUser"
                 className={`flex items-center ${
                   isOpen ? "px-4 py-2" : "p-2 justify-center"
-                } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+                } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
               >
                 {AddUserIcon}
                 <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Add User</span>
@@ -166,7 +166,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 href="/admin/deleteUser"
                 className={`flex items-center ${
                   isOpen ? "px-4 py-2" : "p-2 justify-center"
-                } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+                } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
               >
                 {DeleteUserIcon}
                 <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Delete User</span>
@@ -179,7 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               href="/bookings"
               className={`flex items-center ${
                 isOpen ? "px-4 py-2" : "p-2 justify-center"
-              } rounded-lg text-sm font-medium text-black-700 hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+              } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
             >
               {BookingIcon}
               <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Booking System</span>

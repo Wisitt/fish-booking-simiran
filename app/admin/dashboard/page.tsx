@@ -202,26 +202,26 @@ return (
       <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
         <FaChartLine className="text-blue-500 w-10 h-10" />
         <div>
-          <h3 className="text-lg font-semibold text-black-700">Total Bookings</h3>
+          <h3 className="text-lg font-semibold text-black">Total Bookings</h3>
           <p className="text-4xl font-bold text-black-900">{totalBookings}</p>
         </div>
       </div>
       <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
         <FaCalendarAlt className="text-green-500 w-10 h-10" />
         <div>
-          <h3 className="text-lg font-semibold text-black-700">Growth Rate</h3>
+          <h3 className="text-lg font-semibold text-black">Growth Rate</h3>
           <p className="text-4xl font-bold text-black-900">{growthRate.toFixed(2)}%</p>
         </div>
       </div>
       <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
         <FaFish className="text-purple-500 w-10 h-10" />
         <div>
-          <h3 className="text-lg font-semibold text-black-700">Most Popular Fish</h3>
-          <p className="text-xl font-medium text-black-700">{mostPopularFish}</p>
+          <h3 className="text-lg font-semibold text-black">Most Popular Fish</h3>
+          <p className="text-xl font-medium text-black">{mostPopularFish}</p>
         </div>
       </div>
       <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg">
-        <h3 className="text-lg font-semibold text-black-700">Top 3 Customers</h3>
+        <h3 className="text-lg font-semibold text-black">Top 3 Customers</h3>
         <ul className="space-y-1 mt-2">
           {topCustomers.map((c, i) => (
             <li key={i} className="text-black-900">
@@ -234,19 +234,19 @@ return (
 
     {/* Weekly Chart */}
     <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black-700">Weekly Bookings Trend</h3>
+      <h3 className="text-xl font-semibold mb-4 text-black">Weekly Bookings Trend</h3>
       <Line data={weeklyChartData} />
     </div>
 
     {/* Fish Ranking */}
     <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black-700">Fish Ranking</h3>
+      <h3 className="text-xl font-semibold mb-4 text-black">Fish Ranking</h3>
       <table className="min-w-full table-auto">
         <thead>
           <tr className="bg-gray-100 border-b">
-            <th className="text-left py-3 px-4 font-medium text-black-700">Fish Type</th>
-            <th className="text-left py-3 px-4 font-medium text-black-700">Total Quantity</th>
-            <th className="text-left py-3 px-4 font-medium text-black-700">% Share</th>
+            <th className="text-left py-3 px-4 font-medium text-black">Fish Type</th>
+            <th className="text-left py-3 px-4 font-medium text-black">Total Quantity</th>
+            <th className="text-left py-3 px-4 font-medium text-black">% Share</th>
           </tr>
         </thead>
         <tbody>
@@ -263,13 +263,13 @@ return (
 
     {/* Customer Distribution */}
     <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black-700">Customer Distribution</h3>
+      <h3 className="text-xl font-semibold mb-4 text-black">Customer Distribution</h3>
       <Pie data={customerPieData} />
     </div>
 
     {/* Monthly Chart */}
     <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black-700">Seasonality (Monthly Bookings)</h3>
+      <h3 className="text-xl font-semibold mb-4 text-black">Seasonality (Monthly Bookings)</h3>
       <Line data={monthlyChartData} />
     </div>
   </div>

@@ -43,7 +43,7 @@ const LoginPage = () => {
           <h1 className="text-6xl font-extrabold leading-snug bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600 drop-shadow-sm select-none">
             Simiranfood
           </h1>
-          <h2 className="text-4xl font-bold text-black-700 mt-2 select-none">Booking System</h2>
+          <h2 className="text-4xl font-bold text-black mt-2 select-none">Booking System</h2>
           <p className="text-black-600 mt-4 text-lg max-w-sm select-none">
             Welcome to the ultimate fish booking experience.
             Efficient, Easy, and Elegant.
@@ -55,7 +55,7 @@ const LoginPage = () => {
       <div className="flex-1 flex items-center justify-center relative p-4">
         <div className="bg-white/50 backdrop-blur-md p-8 rounded-2xl shadow-xl max-w-md w-full border border-white/20 hover:shadow-2xl hover:scale-105 transition-transform duration-300 ease-in-out">
           <h1 className="text-4xl text-center   font-extrabold leading-snug bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-sky-400 to-blue-600 drop-shadow-sm select-none">Login</h1>
-          <p className="text-center text-black-700 mb-8 font-medium">Sign in to your account</p>
+          <p className="text-center text-black mb-8 font-medium">Sign in to your account</p>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="relative">

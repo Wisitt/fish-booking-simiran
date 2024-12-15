@@ -309,7 +309,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-4">
             {Object.keys(formData.dailyQuantities).map((day) => (
               <div key={day} className="flex flex-col items-start">
-                <label className="text-sm text-black-700 font-medium mb-1">{day}</label>
+                <label className="text-sm text-black font-medium mb-1">{day}</label>
                 <input
                   type="number"
                   name={`day-${day}`}

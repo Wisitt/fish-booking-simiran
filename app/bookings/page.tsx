@@ -97,25 +97,25 @@ const BookingPage = () => {
             className="border border-white/30 p-4 rounded-xl shadow-md bg-white/70 backdrop-blur-sm flex flex-col space-y-4 transform hover:scale-[1.02] transition-transform duration-300"
           >
             <div className="font-bold text-lg text-blue-700">{booking.code}</div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Team:</span> {booking.team}
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Customer Group:</span> {booking.customerGroup}
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Customer:</span> {booking.customerName}
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Fish Size:</span> {booking.fishSize}
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Fish Type:</span> {booking.fishType}
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Price:</span> {booking.price} THB
             </div>
-            <div className="text-sm text-black-700">
+            <div className="text-sm text-black">
               <span className="font-medium">Daily Quantities:</span>
               <ul className="ml-4 list-disc list-inside">
                 {Object.entries(booking.dailyQuantities).map(([day, qty]) => (

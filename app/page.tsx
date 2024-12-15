@@ -44,7 +44,7 @@ export default function Home() {
         <h1 className="text-4xl md:text-5xl font-bold text-black-800 mb-4">
           Welcome to the <span className="text-blue-600">Simiran System</span>
         </h1>
-        <p className="text-lg md:text-xl text-black-700 mb-6">
+        <p className="text-lg md:text-xl text-black mb-6">
           Streamline your bookings, track data effortlessly, and explore our intuitive system.
         </p>
 
