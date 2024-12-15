@@ -4,5 +4,6 @@
   "/api/bookings/analysis/route": "app/api/bookings/analysis/route.js",
   "/admin/bookings/page": "app/admin/bookings/page.js",
   "/api/summary/route": "app/api/summary/route.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/login/page": "app/login/page.js"
 }

@@ -64,7 +64,7 @@ const LoginPage = () => {
                 placeholder="Username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 pl-12 bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
               />
               <FaUserAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
             </div>
@@ -75,7 +75,7 @@ const LoginPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pl-12 bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
               />
               <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
             </div>
