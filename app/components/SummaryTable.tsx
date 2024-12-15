@@ -140,7 +140,7 @@ const SummaryTable = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center space-x-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-black flex items-center space-x-2">
           <FaTable className="text-blue-600" />
           <span>Summary Table</span>
         </h1>
@@ -148,7 +148,7 @@ const SummaryTable = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
         <div className="flex items-center space-x-4">
-          <label className="text-gray-700 font-medium">Mode:</label>
+          <label className="text-black font-medium">Mode:</label>
           <div className="flex space-x-4">
             <label className="flex items-center space-x-2">
               <input
@@ -158,7 +158,7 @@ const SummaryTable = () => {
                 onChange={() => setMode("all")}
                 className="form-radio text-blue-600"
               />
-              <span>All Weeks</span>
+              <span className="text-black">All Weeks</span>
             </label>
             <label className="flex items-center space-x-2">
               <input
@@ -168,14 +168,14 @@ const SummaryTable = () => {
                 onChange={() => setMode("select")}
                 className="form-radio text-blue-600"
               />
-              <span>Select Week via Date</span>
+              <span className="text-black">Select Week via Date</span>
             </label>
           </div>
         </div>
 
         {mode === "select" && (
           <div className="flex items-center space-x-4">
-            <label className="text-gray-700 font-medium">Select Date:</label>
+            <label className="text-black font-medium">Select Date:</label>
             <DatePicker
               selected={selectedDate}
               onChange={(date: Date | null) => setSelectedDate(date)}
@@ -199,7 +199,7 @@ const SummaryTable = () => {
           return (
             <div key={weekNumber} className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
-                <h2 className="text-lg md:text-xl font-bold text-gray-700">
+                <h2 className="text-lg md:text-xl font-bold text-black">
                   Week {weekNumber} ({bookings[0]?.weekStartDate || "N/A"} - {bookings[0]?.weekEndDate || "N/A"})
                 </h2>
                 <button
@@ -214,31 +214,31 @@ const SummaryTable = () => {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="px-4 py-2 border">Code</th>
-                      <th className="px-4 py-2 border">Customer Name</th>
-                      <th className="px-4 py-2 border hidden md:table-cell">Team</th>
-                      <th className="px-4 py-2 border hidden md:table-cell">Fish Size</th>
+                      <th className="px-4 py-2 border text-black">Code</th>
+                      <th className="px-4 py-2 border text-black">Customer Name</th>
+                      <th className="px-4 py-2 border hidden md:table-cell text-black">Team</th>
+                      <th className="px-4 py-2 border hidden md:table-cell text-black">Fish Size</th>
                       {dayList.map((day) => (
-                        <th key={day} className="px-4 py-2 border hidden lg:table-cell">{day}</th>
+                        <th key={day} className="px-4 py-2 border hidden lg:table-cell text-black">{day}</th>
                       ))}
-                      <th className="px-4 py-2 border">Total</th>
-                      <th className="px-4 py-2 border hidden sm:table-cell">Week #</th>
+                      <th className="px-4 py-2 border text-black">Total</th>
+                      <th className="px-4 py-2 border hidden sm:table-cell text-black">Week #</th>
                     </tr>
                   </thead>
                   <tbody>
                     {bookings.map((booking, i) => (
                       <tr key={i} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 border">{booking.code}</td>
-                        <td className="px-4 py-2 border">{booking.customerName}</td>
-                        <td className="px-4 py-2 border hidden md:table-cell">{booking.team}</td>
-                        <td className="px-4 py-2 border hidden md:table-cell">{booking.fishSize}</td>
+                        <td className="px-4 py-2 border text-black">{booking.code}</td>
+                        <td className="px-4 py-2 border text-black">{booking.customerName}</td>
+                        <td className="px-4 py-2 border hidden md:table-cell text-black">{booking.team}</td>
+                        <td className="px-4 py-2 border hidden md:table-cell text-black">{booking.fishSize}</td>
                         {dayList.map((day) => (
-                          <td key={day} className="px-4 py-2 border hidden lg:table-cell">
+                          <td key={day} className="px-4 py-2 border hidden lg:table-cell text-black">
                             {booking.dailyQuantities?.[day] || 0}
                           </td>
                         ))}
-                        <td className="px-4 py-2 border">{booking.totalQuantity}</td>
-                        <td className="px-4 py-2 border hidden sm:table-cell">{booking.weekNumber}</td>
+                        <td className="px-4 py-2 border text-black">{booking.totalQuantity}</td>
+                        <td className="px-4 py-2 border hidden sm:table-cell text-black">{booking.weekNumber}</td>
                       </tr>
                     ))}
                   </tbody>

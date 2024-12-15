@@ -41,10 +41,10 @@ export default function Home() {
 
       {/* Content Box */}
       <div className="relative z-20 bg-white/50 backdrop-blur-lg shadow-2xl rounded-lg max-w-2xl w-full p-8 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-black-800 mb-4">
           Welcome to the <span className="text-blue-600">Simiran System</span>
         </h1>
-        <p className="text-lg md:text-xl text-gray-700 mb-6">
+        <p className="text-lg md:text-xl text-black-700 mb-6">
           Streamline your bookings, track data effortlessly, and explore our intuitive system.
         </p>
 

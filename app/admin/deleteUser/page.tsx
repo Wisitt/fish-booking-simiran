@@ -95,7 +95,7 @@ const DeleteUserPage = () => {
                 </div>
               </div>
             ) : users.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">No users found</div>
+              <div className="text-center py-12 text-black-500">No users found</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
@@ -120,7 +120,7 @@ const DeleteUserPage = () => {
                           selectedUser === user.id ? "bg-red-100" : ""
                         }`}
                       >
-                        <td className="px-6 py-4 text-sm text-gray-800 border-b">
+                        <td className="px-6 py-4 text-sm text-black-800 border-b">
                           <input
                             type="radio"
                             name="user"
@@ -129,8 +129,8 @@ const DeleteUserPage = () => {
                             className="form-radio text-red-600 focus:ring-red-500"
                           />
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 border-b">{user.email}</td>
-                        <td className="px-6 py-4 text-sm text-gray-800 border-b">
+                        <td className="px-6 py-4 text-sm text-black-800 border-b">{user.email}</td>
+                        <td className="px-6 py-4 text-sm text-black-800 border-b">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               user.role === "admin"

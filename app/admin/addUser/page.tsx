@@ -68,7 +68,7 @@ const AddUserPage = () => {
 
           <form onSubmit={handleAddUser} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-black-700 mb-2">Email</label>
               <input
                 type="text"
                 placeholder="Enter your email"
@@ -79,7 +79,7 @@ const AddUserPage = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-medium text-black-700 mb-2">Password</label>
               <input
                 type="text"
                 placeholder="Enter your password"
@@ -91,7 +91,7 @@ const AddUserPage = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Role</label>
+              <label className="block text-sm font-medium text-black-700">Role</label>
               <div className="flex space-x-4">
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
@@ -102,7 +102,7 @@ const AddUserPage = () => {
                     onChange={() => setRole("user")}
                     className="form-radio text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700">User</span>
+                  <span className="text-sm text-black-700">User</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
@@ -113,7 +113,7 @@ const AddUserPage = () => {
                     onChange={() => setRole("admin")}
                     className="form-radio text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700">Admin</span>
+                  <span className="text-sm text-black-700">Admin</span>
                 </label>
               </div>
             </div>
@@ -128,7 +128,7 @@ const AddUserPage = () => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="w-full bg-gray-200 text-black-700 py-3 rounded-lg hover:bg-gray-300 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Cancel
               </button>

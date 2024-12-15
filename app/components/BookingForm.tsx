@@ -197,10 +197,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
         {/* General Information */}
         <div>
-          <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">General Info</h2>
+          <h2 className="text-xl font-bold text-black-800 mb-4 border-b border-gray-300 pb-2">General Info</h2>
           <div className="flex flex-wrap gap-6">
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Code <span className="text-red-500"></span>
               </label>
               <input
@@ -214,7 +214,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Team <span className="text-red-500"></span>
               </label>
               <input
@@ -227,7 +227,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Customer Group <span className="text-red-500"></span>
               </label>
               <input
@@ -240,7 +240,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Customer Name <span className="text-red-500"></span>
               </label>
               <input
@@ -257,10 +257,10 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
         {/* Fish Info */}
         <div>
-          <h2 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">Fish Details</h2>
+          <h2 className="text-xl font-bold text-black-800 mb-4 border-b border-gray-300 pb-2">Fish Details</h2>
           <div className="flex flex-wrap gap-6">
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Fish Size <span className="text-red-500"></span>
               </label>
               <Select
@@ -268,12 +268,12 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="Select size..."
                 value={fishSizeOptions.find((opt) => opt.value === formData.fishSize)}
                 onChange={(option) => handleSelectChange("fishSize", option as { value: string; label: string })}
-                className="rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
+                className="rounded-md p-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
               />
             </div>
 
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Fish Type <span className="text-red-500"></span>
               </label>
               <Select
@@ -281,12 +281,12 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="Select type..."
                 value={fishTypeOptions.find((opt) => opt.value === formData.fishType)}
                 onChange={(option) => handleSelectChange("fishType", option as { value: string; label: string })}
-                className="rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
+                className="rounded-md p-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
               />
             </div>
 
             <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-gray-800 mb-1">
+              <label className="block text-sm font-medium text-black-800 mb-1">
                 Price (THB) <span className="text-red-500"></span>
               </label>
               <input
@@ -297,19 +297,19 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 onChange={handleChange}
                 className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
               />
-              <span className="text-xs text-gray-500 mt-1">Enter price in Thai Baht</span>
+              <span className="text-xs text-black-500 mt-1">Enter price in Thai Baht</span>
             </div>
           </div>
         </div>
 
         {/* Daily Quantities */}
         <div>
-          <h2 className="text-xl font-bold text-gray-800 mt-8 mb-4 border-b border-gray-300 pb-2">Daily Quantities <span className="text-red-500"></span></h2>
-          <p className="text-sm text-gray-600 mb-4">Please fill in the quantity for each day.</p>
+          <h2 className="text-xl font-bold text-black-800 mt-8 mb-4 border-b border-gray-300 pb-2">Daily Quantities <span className="text-red-500"></span></h2>
+          <p className="text-sm text-black-600 mb-4">Please fill in the quantity for each day.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-4">
             {Object.keys(formData.dailyQuantities).map((day) => (
               <div key={day} className="flex flex-col items-start">
-                <label className="text-sm text-gray-700 font-medium mb-1">{day}</label>
+                <label className="text-sm text-black-700 font-medium mb-1">{day}</label>
                 <input
                   type="number"
                   name={`day-${day}`}
@@ -321,6 +321,25 @@ const BookingForm: React.FC<BookingFormProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex space-x-4 pt-6">
+          <button
+            type="submit"
+            className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-900 text-white font-semibold rounded-lg hover:opacity-90 hover:scale-[1.02] focus:outline-none transition duration-300 shadow-lg"
+          >
+            {editingBooking ? "Update Booking" : "Save Booking"}
+          </button>
+          {editingBooking && (
+            <button
+              type="button"
+              onClick={clearEditingBooking}
+              className="flex-1 py-3 bg-gray-300 text-black-800 rounded-lg hover:bg-gray-400 focus:outline-none transition duration-300 shadow-lg"
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </form>
     </div>
