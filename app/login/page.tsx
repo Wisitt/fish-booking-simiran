@@ -44,7 +44,7 @@ const LoginPage = () => {
             Simiranfood
           </h1>
           <h2 className="text-4xl font-bold text-black mt-2 select-none">Booking System</h2>
-          <p className="text-black-600 mt-4 text-lg max-w-sm select-none">
+          <p className="text-black mt-4 text-lg max-w-sm select-none">
             Welcome to the ultimate fish booking experience.
             Efficient, Easy, and Elegant.
           </p>
@@ -64,9 +64,9 @@ const LoginPage = () => {
                 placeholder="Username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-black-500 placeholder-black-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
               />
-              <FaUserAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black-500" />
+              <FaUserAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black" />
             </div>
 
             <div className="relative">
@@ -75,9 +75,9 @@ const LoginPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-gray-300 placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full p-4 pl-12 text-black bg-white/70 rounded-full border border-black-500 placeholder-black-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
               />
-              <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black-500" />
+              <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-black" />
             </div>
 
             <button
