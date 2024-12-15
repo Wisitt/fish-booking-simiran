@@ -14,3 +14,5 @@ services:
         value: postgresql://postgres:nRiylheTCmWRYkpQqkLOPpWsocuSJeUx@${RAILWAY_PRIVATE_DOMAIN}:5432/railway
       - key: NODE_ENV
         value: production
+    plan: free # Or choose the appropriate plan
+    region: us-west1
