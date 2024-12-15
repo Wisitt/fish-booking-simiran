@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import * as XLSX from "xlsx";
 
 const prisma = new PrismaClient();
-
-// Define `JsonValue` locally
-type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
 interface RawBooking {
   id: number;
@@ -13,7 +10,7 @@ interface RawBooking {
   customerGroup: string;
   customerName: string;
   price: string;
-  dailyQuantities: JsonValue; // Use the locally defined JsonValue type
+  dailyQuantities: Prisma.JsonValue; // Use Prisma.JsonValue
   fishSize: string;
   fishType: string;
   code: string;
@@ -58,7 +55,9 @@ export async function GET(req: Request) {
       bookings = rawBookings.map((booking: RawBooking): Booking => ({
         ...booking,
         dailyQuantities:
-          typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
+          typeof booking.dailyQuantities === "object" &&
+          booking.dailyQuantities !== null &&
+          !Array.isArray(booking.dailyQuantities)
             ? (booking.dailyQuantities as Record<string, number>)
             : null,
       }));
@@ -68,7 +67,9 @@ export async function GET(req: Request) {
       bookings = rawBookings.map((booking: RawBooking): Booking => ({
         ...booking,
         dailyQuantities:
-          typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
+          typeof booking.dailyQuantities === "object" &&
+          booking.dailyQuantities !== null &&
+          !Array.isArray(booking.dailyQuantities)
             ? (booking.dailyQuantities as Record<string, number>)
             : null,
       }));
