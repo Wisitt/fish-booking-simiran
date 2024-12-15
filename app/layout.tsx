@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "./components/Sidebar";
 import "./globals.css";
+import { Head } from "next/document";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -44,6 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
+      <head>
+      <title>Simiran Food Systems</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Simiran Food Systems - The best food booking system" />
+        <link rel="icon" href="/fish_logo.png" />
+        </head>
       <body className="h-screen w-screen overflow-hidden bg-gradient-to-b from-sky-200 via-sky-400 to-sky-300  flex">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
         <div className={`flex-1 overflow-auto transition-all ${isSidebarOpen ? "ml-0" : "ml-0"}`}>
