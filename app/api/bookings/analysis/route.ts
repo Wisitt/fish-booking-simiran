@@ -3,10 +3,13 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Define JsonValue locally
+type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
+
 interface BookingItem {
   fishType: string;
   createdAt: Date;
-  dailyQuantities: Record<string, number> | null;
+  dailyQuantities: JsonValue;
   customerName: string | null;
 }
 
@@ -20,7 +23,7 @@ export async function POST(req: Request) {
     const userIdNum = Number(userId);
     const filter: Record<string, unknown> = role !== "admin" ? { userId: userIdNum } : {};
 
-    const rawBookings = await prisma.booking.findMany({
+    const bookings = await prisma.booking.findMany({
       where: filter,
       select: {
         fishType: true,
@@ -29,22 +32,6 @@ export async function POST(req: Request) {
         customerName: true,
       },
     });
-
-    // Explicitly annotate the type of `booking` in the `.map` function
-    const bookings: BookingItem[] = rawBookings.map((booking: {
-      fishType: string;
-      createdAt: Date;
-      dailyQuantities: unknown;
-      customerName: string | null;
-    }) => ({
-      fishType: booking.fishType,
-      createdAt: booking.createdAt,
-      customerName: booking.customerName,
-      dailyQuantities:
-        typeof booking.dailyQuantities === "object" && !Array.isArray(booking.dailyQuantities)
-          ? (booking.dailyQuantities as Record<string, number>)
-          : null,
-    }));
 
     if (bookings.length === 0) {
       return NextResponse.json({ message: "No bookings found" }, { status: 404 });
@@ -70,13 +57,13 @@ export async function POST(req: Request) {
 
     const mostPopularFish = Object.keys(fishTotals).reduce((a, b) => (fishTotals[a] > fishTotals[b] ? a : b));
 
-    const fishRanking = Object.entries(fishTotals)
-      .sort(([, totalA], [, totalB]) => totalB - totalA)
-      .map(([fish, total]) => ({
-        fish,
-        total,
-        share: (total / totalBookings) * 100,
-      }));
+    const fishEntries = Object.entries(fishTotals);
+    fishEntries.sort((a, b) => b[1] - a[1]);
+    const fishRanking = fishEntries.map(([fish, total]) => ({
+      fish,
+      total,
+      share: (total / totalBookings) * 100,
+    }));
 
     const customerTotals: Record<string, number> = {};
     for (const booking of bookings) {
@@ -85,48 +72,105 @@ export async function POST(req: Request) {
       customerTotals[cname] = (customerTotals[cname] || 0) + qty;
     }
 
-    const topCustomers = Object.entries(customerTotals)
-      .sort(([, totalA], [, totalB]) => totalB - totalA)
-      .slice(0, 3)
-      .map(([customerName, totalQuantity]) => ({
-        customerName,
-        totalQuantity,
-      }));
+    const customerEntries = Object.entries(customerTotals);
+    customerEntries.sort((a, b) => b[1] - a[1]);
+
+    const topCustomers = customerEntries.slice(0, 3).map(([customerName, totalQuantity]) => ({
+      customerName,
+      totalQuantity,
+    }));
+
+    const customerDistribution = customerEntries.map(([customerName, total]) => ({
+      customerName,
+      total,
+      share: (total / totalBookings) * 100,
+    }));
+
+    const monthlyBreakdown = processMonthlyBookings(bookings);
 
     const result = {
       totalBookings,
       growthRate,
       mostPopularFish,
       topCustomers,
+      weeklyBreakdown: weeklyBookings,
       fishRanking,
+      customerDistribution,
+      monthlyBreakdown,
     };
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return NextResponse.json({ message: "Internal Server Error", error }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error", error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
   }
 }
 
 function processWeeklyBookings(bookings: BookingItem[]) {
-  const groupedByWeek: Record<number, { weekNumber: number; totalQuantity: number }> = {};
+  const groupedByWeek: Record<number, { weekNumber: number; weekStart: string; weekEnd: string; totalQuantity: number }> =
+    {};
 
   for (const booking of bookings) {
     const weekNumber = getWeekNumber(new Date(booking.createdAt));
-    groupedByWeek[weekNumber] = groupedByWeek[weekNumber] || { weekNumber, totalQuantity: 0 };
-    groupedByWeek[weekNumber].totalQuantity += totalFromDailyQuantities(booking.dailyQuantities);
+    if (!groupedByWeek[weekNumber]) {
+      groupedByWeek[weekNumber] = {
+        weekNumber,
+        weekStart: getWeekStartDate(weekNumber),
+        weekEnd: getWeekEndDate(weekNumber),
+        totalQuantity: 0,
+      };
+    }
+
+    const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
+    groupedByWeek[weekNumber].totalQuantity += totalForBooking;
   }
 
-  return Object.values(groupedByWeek);
+  return Object.values(groupedByWeek).sort((a, b) => a.weekNumber - b.weekNumber);
 }
 
-function totalFromDailyQuantities(dailyQuantities: Record<string, number> | null): number {
-  if (!dailyQuantities) return 0;
-  return Object.values(dailyQuantities).reduce((sum, qty) => sum + qty, 0);
+function processMonthlyBookings(bookings: BookingItem[]) {
+  const year = new Date().getFullYear();
+  const monthlyTotals: number[] = Array(12).fill(0);
+
+  for (const booking of bookings) {
+    const date = new Date(booking.createdAt);
+    if (date.getFullYear() === year) {
+      const monthIndex = date.getMonth();
+      const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
+      monthlyTotals[monthIndex] += totalForBooking;
+    }
+  }
+
+  return monthlyTotals.map((total, index) => ({ month: index + 1, totalQuantity: total }));
+}
+
+function totalFromDailyQuantities(dailyQuantities: JsonValue): number {
+  if (dailyQuantities && typeof dailyQuantities === "object" && !Array.isArray(dailyQuantities)) {
+    const dq = dailyQuantities as Record<string, number>;
+    return Object.values(dq).reduce((sum, qty) => sum + qty, 0);
+  }
+  return 0;
 }
 
 function getWeekNumber(date: Date): number {
   const startDate = new Date(date.getFullYear(), 0, 1);
   const diff = date.getTime() - startDate.getTime();
   return Math.ceil((diff / (1000 * 3600 * 24) + 1) / 7);
+}
+
+function getWeekStartDate(weekNumber: number): string {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), 0, 1);
+  firstDay.setDate(firstDay.getDate() + (weekNumber - 1) * 7);
+  return firstDay.toISOString().split("T")[0];
+}
+
+function getWeekEndDate(weekNumber: number): string {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), 0, 1);
+  firstDay.setDate(firstDay.getDate() + (weekNumber - 1) * 7 + 6);
+  return firstDay.toISOString().split("T")[0];
 }
