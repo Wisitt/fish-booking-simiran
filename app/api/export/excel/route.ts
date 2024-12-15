@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
+import { Prisma } from "@prisma/client/wasm";
 
 const prisma = new PrismaClient();
 
