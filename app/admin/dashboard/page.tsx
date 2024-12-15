@@ -91,21 +91,26 @@ const AdminDashboard = () => {
       console.error("User ID not found");
       return;
     }
-
-    const response = await fetch("/api/bookings/analysis", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, role: "admin" }),
-    });
-
-    if (!response.ok) {
-      console.error("Failed to fetch data");
-      return;
+  
+    try {
+      const response = await fetch("/api/bookings/analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, role: "admin" }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+  
+      const data: AnalysisResult = await response.json();
+      setAnalysisData(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setAnalysisData(null); // Set null to indicate failure
     }
-
-    const data: AnalysisResult = await response.json();
-    setAnalysisData(data);
   };
+  
 
   if (role !== "admin") return null;
   if (!analysisData) return <div className="text-center">Loading...</div>;
