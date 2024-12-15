@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ export async function GET() {
     const rawBookings = await prisma.booking.findMany();
 
     // Transform raw Prisma data to match Booking interface
-    const bookings: Booking[] = rawBookings.map((booking) => ({
+    const bookings: Booking[] = rawBookings.map((booking: Prisma.Booking) => ({
       id: booking.id,
       code: booking.code,
       customerName: booking.customerName,
