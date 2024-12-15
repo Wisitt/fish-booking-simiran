@@ -190,14 +190,6 @@ const AdminDashboard = () => {
       },
     ],
   };
- // Fish Ranking Table
- const fishRankingTable = fishRanking.map((fish, index) => (
-  <tr key={index} className="border-b hover:bg-gray-50 transition">
-    <td className="py-3 px-4 text-gray-900">{fish.fish}</td>
-    <td className="py-3 px-4 text-gray-900">{fish.total}</td>
-    <td className="py-3 px-4 text-gray-900">{fish.share.toFixed(2)}%</td>
-  </tr>
-));
 return (
   <div className="container mx-auto px-6 py-8">
     {/* Header */}
