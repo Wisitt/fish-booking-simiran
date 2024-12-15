@@ -11,7 +11,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.1",
     "@hookform/resolvers": "^3.9.1",
-    "@prisma/client": "^4.0.0",
+    "@prisma/client": "^4.16.0",
     "@types/bcryptjs": "^2.4.6",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -19,10 +19,11 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.468.0",
     "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-chartjs-2": "^5.2.0",
+    "prisma": "^6.0.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^4.3.0",
     "react-datepicker": "^7.5.0",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.1",
     "react-icons": "^5.4.0",
     "react-select": "^5.8.3",
@@ -31,6 +32,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "prisma": "^4.16.0",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.17.10",
     "@types/react": "^18",
