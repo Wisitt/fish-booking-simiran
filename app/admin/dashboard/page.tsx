@@ -115,6 +115,16 @@ const AdminDashboard = () => {
   if (role !== "admin") return null;
   if (!analysisData) return <div className="text-center">Loading...</div>;
 
+
+  if (analysisData === null) {
+    return (
+      <div className="text-center text-red-600">
+        Failed to load data. Please try again later.
+      </div>
+    );
+  }
+
+  
   const {
     totalBookings,
     growthRate,
@@ -127,21 +137,22 @@ const AdminDashboard = () => {
   } = analysisData;
 
   // Weekly Trend Chart
-  const weeklyLabels = weeklyBreakdown.map((w) => `Week ${w.weekNumber}`);
-  const weeklyData = weeklyBreakdown.map((w) => w.totalQuantity);
+  const weeklyLabels = analysisData?.weeklyBreakdown?.map((w) => `Week ${w.weekNumber}`) || [];
+  const weeklyData = analysisData?.weeklyBreakdown?.map((w) => w.totalQuantity) || [];
 
   const weeklyChartData = {
     labels: weeklyLabels,
     datasets: [
       {
         label: "Weekly Bookings",
-        data: weeklyData,
+        data: weeklyData.length ? weeklyData : [0], // Default value for empty data
         borderColor: "#4F46E5",
         backgroundColor: "rgba(79, 70, 229, 0.2)",
         tension: 0.4,
       },
     ],
   };
+  
 
   // Customer Distribution Chart
   const customerLabels = customerDistribution.map((c) => c.customerName);
