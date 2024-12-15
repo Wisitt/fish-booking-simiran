@@ -116,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           <h2
             className={`${
               isOpen ? "block" : "hidden"
-            } text-sm text-black-800 font-semibold transition-all duration-300 ease-in-out`}
+            } text-sm text-black font-semibold transition-all duration-300 ease-in-out`}
           >
             SIMIRAN FOOD SYSTEMS
           </h2>

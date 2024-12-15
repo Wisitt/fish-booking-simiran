@@ -120,7 +120,7 @@ const DeleteUserPage = () => {
                           selectedUser === user.id ? "bg-red-100" : ""
                         }`}
                       >
-                        <td className="px-6 py-4 text-sm text-black-800 border-b">
+                        <td className="px-6 py-4 text-sm text-black border-b">
                           <input
                             type="radio"
                             name="user"
@@ -129,8 +129,8 @@ const DeleteUserPage = () => {
                             className="form-radio text-red-600 focus:ring-red-500"
                           />
                         </td>
-                        <td className="px-6 py-4 text-sm text-black-800 border-b">{user.email}</td>
-                        <td className="px-6 py-4 text-sm text-black-800 border-b">
+                        <td className="px-6 py-4 text-sm text-black border-b">{user.email}</td>
+                        <td className="px-6 py-4 text-sm text-black border-b">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               user.role === "admin"
