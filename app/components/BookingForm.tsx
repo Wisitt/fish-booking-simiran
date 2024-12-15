@@ -210,7 +210,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="e.g., AB123"
                 value={formData.code}
                 onChange={handleChange}
-                className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-md"
+                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-md"
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
@@ -223,7 +223,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="Team Name"
                 value={formData.team}
                 onChange={handleChange}
-                className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
+                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
@@ -236,7 +236,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="e.g., VIP Group"
                 value={formData.customerGroup}
                 onChange={handleChange}
-                className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
+                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
               />
             </div>
             <div className="flex flex-col sm:w-full md:w-1/4">
@@ -249,7 +249,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="e.g., John Doe"
                 value={formData.customerName}
                 onChange={handleChange}
-                className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
+                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
               />
             </div>
           </div>
@@ -295,7 +295,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
                 placeholder="e.g., 500"
                 value={formData.price}
                 onChange={handleChange}
-                className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
+                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
               />
               <span className="text-xs text-gray-500 mt-1">Enter price in Thai Baht</span>
             </div>
@@ -316,30 +316,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   placeholder="0"
                   value={formData.dailyQuantities[day]}
                   onChange={handleChange}
-                  className="w-full p-2 bg-white/90 border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-lg"
+                  className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-lg"
                 />
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex space-x-4 pt-6">
-          <button
-            type="submit"
-            className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-900 text-white font-semibold rounded-lg hover:opacity-90 hover:scale-[1.02] focus:outline-none transition duration-300 shadow-lg"
-          >
-            {editingBooking ? "Update Booking" : "Save Booking"}
-          </button>
-          {editingBooking && (
-            <button
-              type="button"
-              onClick={clearEditingBooking}
-              className="flex-1 py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none transition duration-300 shadow-lg"
-            >
-              Cancel
-            </button>
-          )}
         </div>
       </form>
     </div>

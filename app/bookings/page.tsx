@@ -75,7 +75,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-6 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-12 font-sans">
       <h1 className="text-4xl font-extrabold mb-6 text-center text-blue-700 drop-shadow-sm">
         Fish Booking System
       </h1>
