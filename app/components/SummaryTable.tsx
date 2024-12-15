@@ -20,7 +20,6 @@ interface Booking {
 
 const SummaryTable = () => {
   const [summary, setSummary] = useState<Booking[]>([]);
-  // const [weeks, setWeeks] = useState<number[]>([]);
   const [mode, setMode] = useState<"all" | "select">("all");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
@@ -29,24 +28,23 @@ const SummaryTable = () => {
     const fetchSummary = async () => {
       try {
         const userId = localStorage.getItem("userId");
-  
+
         if (!userId) {
           throw new Error("User ID is not set in localStorage");
         }
-  
+
         const response = await fetch("/api/summary", {
           headers: {
             userId: userId,
           },
         });
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch summary");
         }
-  
+
         const data: Booking[] = await response.json();
-  
-        // Calculate weekStartDate and weekEndDate
+
         const updatedData = data.map((booking) => {
           const { start, end } = getWeekStartAndEndDates(
             booking.weekNumber,
@@ -58,21 +56,15 @@ const SummaryTable = () => {
             weekEndDate: end,
           };
         });
-  
+
         setSummary(updatedData);
-  
-        // const uniqueWeeks = Array.from(new Set(updatedData.map((item) => item.weekNumber))).sort(
-        //   (a, b) => a - b
-        // );
-        // setWeeks(uniqueWeeks);
       } catch (error) {
         console.error("Error fetching summary:", error);
       }
     };
-  
+
     fetchSummary();
   }, []);
-  
 
   useEffect(() => {
     if (mode === "select" && selectedDate) {
@@ -91,33 +83,25 @@ const SummaryTable = () => {
   };
 
   const getWeekStartAndEndDates = (weekNumber: number, year: number) => {
-    if (weekNumber < 1 || weekNumber > 53) {
-      console.error(`Invalid week number: ${weekNumber}`);
-      return { start: null, end: null };
-    }
-  
     const startDate = new Date(Date.UTC(year, 0, 1 + (weekNumber - 1) * 7));
-    const dayOffset = startDate.getUTCDay() === 0 ? -6 : 1 - startDate.getUTCDay(); // Adjust to Monday
+    const dayOffset = startDate.getUTCDay() === 0 ? -6 : 1 - startDate.getUTCDay();
     startDate.setUTCDate(startDate.getUTCDate() + dayOffset);
-  
+
     const endDate = new Date(startDate);
-    endDate.setUTCDate(startDate.getUTCDate() + 5); // Week ends on Saturday
-  
-    // Format dates as DD/MM/YYYY
+    endDate.setUTCDate(startDate.getUTCDate() + 5);
+
     const formatToDDMMYYYY = (date: Date) => {
       const day = String(date.getUTCDate()).padStart(2, "0");
       const month = String(date.getUTCMonth() + 1).padStart(2, "0");
       const year = date.getUTCFullYear();
       return `${day}/${month}/${year}`;
     };
-  
+
     return {
       start: formatToDDMMYYYY(startDate),
       end: formatToDDMMYYYY(endDate),
     };
   };
-  
-  
 
   const groupedByWeek = summary.reduce((acc: Record<number, Booking[]>, item) => {
     if (!acc[item.weekNumber]) {
@@ -155,15 +139,13 @@ const SummaryTable = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 flex items-center space-x-2">
+      <header className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center space-x-2">
           <FaTable className="text-blue-600" />
           <span>Summary Table</span>
         </h1>
       </header>
 
-      {/* Filter Controls */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
         <div className="flex items-center space-x-4">
           <label className="text-gray-700 font-medium">Mode:</label>
@@ -205,7 +187,6 @@ const SummaryTable = () => {
         )}
       </div>
 
-      {/* Tables */}
       <div className="space-y-8">
         {Object.keys(displayData).map((week) => {
           const weekNumber = Number(week);
@@ -217,8 +198,8 @@ const SummaryTable = () => {
 
           return (
             <div key={weekNumber} className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-700">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
+                <h2 className="text-lg md:text-xl font-bold text-gray-700">
                   Week {weekNumber} ({bookings[0]?.weekStartDate || "N/A"} - {bookings[0]?.weekEndDate || "N/A"})
                 </h2>
                 <button
@@ -229,38 +210,40 @@ const SummaryTable = () => {
                   <span>Export Week {weekNumber}</span>
                 </button>
               </div>
-              <table className="w-full text-sm text-left border-collapse">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-4 py-2 border">Code</th>
-                    <th className="px-4 py-2 border">Customer Name</th>
-                    <th className="px-4 py-2 border">Team</th>
-                    <th className="px-4 py-2 border">Fish Size</th>
-                    {dayList.map((day) => (
-                      <th key={day} className="px-4 py-2 border">{day}</th>
-                    ))}
-                    <th className="px-4 py-2 border">Total</th>
-                    <th className="px-4 py-2 border">Week #</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookings.map((booking, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">{booking.code}</td>
-                      <td className="px-4 py-2 border">{booking.customerName}</td>
-                      <td className="px-4 py-2 border">{booking.team}</td>
-                      <td className="px-4 py-2 border">{booking.fishSize}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-2 border">Code</th>
+                      <th className="px-4 py-2 border">Customer Name</th>
+                      <th className="px-4 py-2 border hidden md:table-cell">Team</th>
+                      <th className="px-4 py-2 border hidden md:table-cell">Fish Size</th>
                       {dayList.map((day) => (
-                        <td key={day} className="px-4 py-2 border">
-                          {booking.dailyQuantities?.[day] || 0}
-                        </td>
+                        <th key={day} className="px-4 py-2 border hidden lg:table-cell">{day}</th>
                       ))}
-                      <td className="px-4 py-2 border">{booking.totalQuantity}</td>
-                      <td className="px-4 py-2 border">{booking.weekNumber}</td>
+                      <th className="px-4 py-2 border">Total</th>
+                      <th className="px-4 py-2 border hidden sm:table-cell">Week #</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {bookings.map((booking, i) => (
+                      <tr key={i} className="hover:bg-gray-50">
+                        <td className="px-4 py-2 border">{booking.code}</td>
+                        <td className="px-4 py-2 border">{booking.customerName}</td>
+                        <td className="px-4 py-2 border hidden md:table-cell">{booking.team}</td>
+                        <td className="px-4 py-2 border hidden md:table-cell">{booking.fishSize}</td>
+                        {dayList.map((day) => (
+                          <td key={day} className="px-4 py-2 border hidden lg:table-cell">
+                            {booking.dailyQuantities?.[day] || 0}
+                          </td>
+                        ))}
+                        <td className="px-4 py-2 border">{booking.totalQuantity}</td>
+                        <td className="px-4 py-2 border hidden sm:table-cell">{booking.weekNumber}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           );
         })}
