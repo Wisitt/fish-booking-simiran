@@ -1,7 +1,9 @@
+// app/admin/bookings/page.tsx 
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import BookingForm from "../components/BookingForm";
+import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 
 interface Booking {
   id: number;
@@ -15,9 +17,10 @@ interface Booking {
   fishType: string;
 }
 
-const BookingPage = () => {
+export default function BookingPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [searchCode, setSearchCode] = useState("");
   const firstInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -31,14 +34,13 @@ const BookingPage = () => {
       const response = await fetch("/api/bookings", {
         method: "GET",
         headers: {
-          "email": "",
-          "role": "user",
           "userId": userId,
         },
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+        console.error("Failed to fetch bookings");
+        return;
       }
 
       const data = await response.json();
@@ -55,7 +57,7 @@ const BookingPage = () => {
       });
 
       if (response.ok) {
-        setBookings(bookings.filter((booking) => booking.id !== id));
+        setBookings((prev) => prev.filter((b) => b.id !== id));
         alert("Booking deleted successfully!");
       } else {
         alert("Error deleting booking.");
@@ -74,12 +76,14 @@ const BookingPage = () => {
     setEditingBooking(null);
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-12 font-sans">
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-blue-700 drop-shadow-sm">
-        Fish Booking System
-      </h1>
+  // ทำการกรอง bookings ตามค่า searchCode
+  const filteredBookings = bookings.filter(b => 
+    b.code.toLowerCase().includes(searchCode.toLowerCase())
+  );
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-12">
+      <h1 className="text-4xl font-extrabold mb-6 text-center text-blue-700">Fish Booking System</h1>
       <div className="max-w-5xl mx-auto mb-10">
         <BookingForm
           setBookings={setBookings}
@@ -89,61 +93,99 @@ const BookingPage = () => {
         />
       </div>
 
+      {/* Search Bar */}
+      <div className="flex items-center space-x-2 max-w-sm mb-4">
+        <FaSearch className="text-gray-500" />
+        <input
+          type="text"
+          placeholder="Filter by code..."
+          value={searchCode}
+          onChange={(e) => setSearchCode(e.target.value)}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
+      </div>
+
       <h2 className="text-2xl font-semibold mb-4 text-blue-600">Your Bookings</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bookings.map((booking) => (
-          <div
-            key={booking.id}
-            className="border border-white/30 p-4 rounded-xl shadow-md bg-white/70 backdrop-blur-sm flex flex-col space-y-4 transform hover:scale-[1.02] transition-transform duration-300"
-          >
-            <div className="font-bold text-lg text-blue-700">{booking.code}</div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Team:</span> {booking.team}
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Customer Group:</span> {booking.customerGroup}
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Customer:</span> {booking.customerName}
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Fish Size:</span> {booking.fishSize}
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Fish Type:</span> {booking.fishType}
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Price:</span> {booking.price} THB
-            </div>
-            <div className="text-sm text-black">
-              <span className="font-medium">Daily Quantities:</span>
-              <ul className="ml-4 list-disc list-inside">
-                {Object.entries(booking.dailyQuantities).map(([day, qty]) => (
-                  <li key={day}>
-                    <span className="text-black-600">{day}</span>: {qty} fish
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex justify-between space-x-4 mt-4">
-              <button
-                onClick={() => handleEdit(booking)}
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(booking.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="overflow-x-auto bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4">
+        <table className="min-w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b bg-gray-100">
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Code</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Team</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Customer Group</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Customer Name</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Fish Size</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Fish Type</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Price (THB)</th>
+              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Daily Quantities</th>
+              <th className="py-3 px-4 font-medium text-gray-700 text-center whitespace-nowrap">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBookings.map((booking, index) => (
+              <tr key={booking.id} className={`border-b hover:bg-gray-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                <td className="py-3 px-4 text-blue-800 font-bold whitespace-nowrap">{booking.code}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.team}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.customerGroup}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.customerName}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.fishSize}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.fishType}</td>
+                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.price}</td>
+                <td className="py-3 px-4 text-gray-800">
+                  <div className="overflow-x-auto">
+                    <table className="text-center border-collapse">
+                      <thead>
+                        <tr>
+                          {Object.keys(booking.dailyQuantities).map((day) => (
+                            <th key={day} className="py-1 px-3 font-medium text-gray-700 bg-gray-200 border-r last:border-0 whitespace-nowrap">{day}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {Object.entries(booking.dailyQuantities).map(([day, qty]) => (
+                            <td key={day} className="py-1 px-3 border-r last:border-0 whitespace-nowrap">
+                              {qty}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+                <td className="py-3 px-4 text-center whitespace-nowrap">
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={() => handleEdit(booking)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 flex items-center space-x-1"
+                      title="Edit Booking"
+                    >
+                      <FaEdit />
+                      <span className="hidden md:inline">Edit</span>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(booking.id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 flex items-center space-x-1"
+                      title="Delete Booking"
+                    >
+                      <FaTrash />
+                      <span className="hidden md:inline">Delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+
+            {filteredBookings.length === 0 && (
+              <tr>
+                <td colSpan={9} className="text-center py-6 text-gray-500">
+                  No bookings found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
-};
-
-export default BookingPage;
+}

@@ -1,3 +1,4 @@
+// app/api/admin/getUsers/route.ts 
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -10,6 +11,7 @@ export async function GET() {
         id: true,
         email: true,
         role: true,
+        passwordHash: true, // เพิ่มการ select passwordHash
       },
     });
     return NextResponse.json(users);

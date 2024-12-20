@@ -1,3 +1,4 @@
+// app/components/Sidebar.tsx 
 "use client";
 
 import { useState, useEffect } from "react";
@@ -81,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       <div className="flex flex-col w-full h-full p-2 relative z-10">
         <button
           onClick={toggleSidebar}
-          className={`absolute top-4 p-2 text-black-600 transform transition-transform duration-300 ease-in-out ${
+          className={`absolute top-4 p-2 text-black transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-48" : "translate-x-2"
           }`}
         >
@@ -170,6 +171,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               >
                 {DeleteUserIcon}
                 <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Delete User</span>
+              </Link>
+              <Link
+                href="/admin/resetPassword"
+                className={`flex items-center ${
+                  isOpen ? "px-4 py-2" : "p-2 justify-center"
+                } rounded-lg text-sm font-medium text-black hover:bg-white/50 hover:scale-105 transition-all duration-300 ease-in-out`}
+              >
+                {DeleteUserIcon}
+                <span className={`${isOpen ? "block" : "hidden"} ml-3`}>Reset Password</span>
               </Link>
             </>
           )}

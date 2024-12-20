@@ -1,16 +1,16 @@
+// app/api/bookings/[id]/route.ts 
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function PUT(req: Request) {
-  const body = await req.json();
-
-  if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.userId) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
-
   try {
+    const body = await req.json();
+    if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.userId) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
     const updatedBooking = await prisma.booking.update({
       where: { id: Number(body.id) },
       data: {
@@ -33,19 +33,19 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
-    try {
-      const url = new URL(req.url);
-      const id = url.searchParams.get("id");
-  
-      if (!id) {
-        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
-      }
-  
-      await prisma.booking.delete({ where: { id: parseInt(id, 10) } });
-      return NextResponse.json({ message: "Booking deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-      return NextResponse.json({ error: "Server error" }, { status: 500 });
-    }
-  }
+// export async function DELETE(req: Request) {
+//   try {
+//     const url = new URL(req.url);
+//     const id = url.searchParams.get("id");
+
+//     if (!id) {
+//       return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+//     }
+
+//     await prisma.booking.delete({ where: { id: parseInt(id, 10) } });
+//     return NextResponse.json({ message: "Booking deleted successfully" });
+//   } catch (error) {
+//     console.error("Error deleting booking:", error);
+//     return NextResponse.json({ error: "Server error" }, { status: 500 });
+//   }
+// }

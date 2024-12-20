@@ -1,9 +1,31 @@
+// app/components/BookingForm.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { getWeekDays } from "@/app/lib/weekUtils";
+import { SingleValue } from 'react-select';
+import { FaFish, FaUserTie, FaCalendarAlt, FaTag, FaUsers, FaCodeBranch } from "react-icons/fa";
 
-const Select = dynamic(() => import("react-select"), { ssr: false });
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+const ReactSelect = dynamic(() => import('react-select'), {
+  ssr: false
+});
+
+const fishSizeOptions: SelectOption[] = [
+  { value: "3/4", label: "3/4" },
+  { value: "4/5", label: "4/5" },
+  { value: "5/6", label: "5/6" },
+];
+
+const fishTypeOptions: SelectOption[] = [
+  { value: "Norway", label: "Norway" },
+  { value: "Trout", label: "Trout" },
+];
 
 interface Booking {
   id: number;
@@ -15,54 +37,22 @@ interface Booking {
   dailyQuantities: Record<string, number>;
   fishSize: string;
   fishType: string;
+  weekNumber?: number;
 }
 
-interface FormData {
-  code: string;
-  team: string;
-  customerGroup: string;
-  customerName: string;
-  fishSize: string;
-  fishType: string;
-  price: string;
-  dailyQuantities: Record<string, number>;
-}
+interface FormData extends Omit<Booking, "id"> {}
 
-interface BookingFormProps {
+interface Props {
   setBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
   editingBooking?: Booking | null;
   clearEditingBooking?: () => void;
   firstInputRef: React.RefObject<HTMLInputElement>;
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({
-  setBookings,
-  editingBooking,
-  clearEditingBooking,
-  firstInputRef,
-}) => {
-  const getWeekDays = (): string[] => {
-    const startDate = new Date();
-    const days: string[] = [];
-    for (let i = 1; i <= 6; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + (i - startDate.getDay()));
-      days.push(date.toISOString().split("T")[0]);
-    }
-    return days;
-  };
-
-  const fishSizeOptions = [
-    { value: "3/4", label: "3/4" },
-    { value: "4/5", label: "4/5" },
-    { value: "5/6", label: "5/6" },
-  ];
-
-  const fishTypeOptions = [
-    { value: "Norway", label: "Norway" },
-    { value: "Trout", label: "Trout" },
-  ];
-
+const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditingBooking, firstInputRef }) => {
+  
+  const weekDays = useMemo(() => getWeekDays(), []);
+  
   const [formData, setFormData] = useState<FormData>({
     code: "",
     team: "",
@@ -71,14 +61,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
     fishSize: "",
     fishType: "",
     price: "",
-    dailyQuantities: {},
+    dailyQuantities: weekDays.reduce((acc, day) => ({ ...acc, [day]: 0 }), {}),
+    weekNumber: 0,
   });
 
   useEffect(() => {
-    const weekDays = getWeekDays();
     if (editingBooking) {
       setFormData(editingBooking);
-      if (firstInputRef.current) firstInputRef.current.focus();
     } else {
       setFormData({
         code: "",
@@ -89,10 +78,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
         fishType: "",
         price: "",
         dailyQuantities: weekDays.reduce((acc, day) => ({ ...acc, [day]: 0 }), {}),
+        weekNumber: 0,
       });
-      if (firstInputRef.current) firstInputRef.current.focus();
     }
-  }, [editingBooking,firstInputRef]);
+    firstInputRef.current?.focus();
+  }, [editingBooking, firstInputRef, weekDays]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -109,23 +99,14 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
   const handleSelectChange = (
     field: "fishSize" | "fishType",
-    option: { value: string; label: string }
+    option: SingleValue<SelectOption>
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: option.value }));
+    setFormData((prev) => ({ ...prev, [field]: option?.value || "" }));
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (
-      !formData.code ||
-      !formData.team ||
-      !formData.customerGroup ||
-      !formData.customerName ||
-      !formData.price ||
-      Object.keys(formData.dailyQuantities).length === 0
-    ) {
+    if (!formData.code || !formData.team || !formData.customerGroup || !formData.customerName || !formData.price) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -133,8 +114,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
     try {
       const method = editingBooking ? "PUT" : "POST";
       const url = editingBooking ? `/api/bookings/${editingBooking.id}` : "/api/bookings";
-
       const userId = localStorage.getItem("userId");
+
       if (!userId) {
         alert("User is not logged in.");
         return;
@@ -152,18 +133,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
         throw new Error(data.error || "Failed to save booking");
       }
 
-      const updatedBooking = data;
+      editingBooking
+        ? setBookings((prev) => prev.map((b) => (b.id === data.id ? data : b)))
+        : setBookings((prev) => [...prev, data]);
 
-      if (editingBooking) {
-        setBookings((prev) =>
-          prev.map((booking) => (booking.id === updatedBooking.id ? updatedBooking : booking))
-        );
-        alert("Booking updated!");
-      } else {
-        setBookings((prev) => [...prev, updatedBooking]);
-        alert("Booking saved!");
-      }
-
+      alert(editingBooking ? "Booking updated!" : "Booking saved!");
       clearEditingBooking?.();
     } catch (error) {
       console.error("Error saving booking:", error);
@@ -172,177 +146,152 @@ const BookingForm: React.FC<BookingFormProps> = ({
   };
 
   return (
-    <div className="relative">
-      {/* Background decoration */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none opacity-20">
-        <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#bae6fd" />
-              <stop offset="100%" stopColor="#a7f3d0" />
-            </linearGradient>
-          </defs>
-          <rect width="800" height="600" fill="url(#bgGradient)" />
-          <path fill="#fff" d="M0,300 C200,400 600,200 800,300 L800,600 L0,600 Z" opacity="0.3" />
-        </svg>
+    <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200">
+      <h1 className="text-2xl font-bold text-center text-blue-800 mb-4">
+        {editingBooking ? "Edit Booking" : "Add New Booking"}
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaCodeBranch className="text-blue-600" /><span>Code</span>
+          </label>
+          <input
+            ref={firstInputRef}
+            type="text"
+            name="code"
+            value={formData.code}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="e.g. S123"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaUsers className="text-green-600" /><span>Team</span>
+          </label>
+          <input
+            type="text"
+            name="team"
+            value={formData.team}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-green-300"
+            placeholder="e.g. Seafood Team"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaUserTie className="text-purple-600" /><span>Customer Group</span>
+          </label>
+          <input
+            type="text"
+            name="customerGroup"
+            value={formData.customerGroup}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300"
+            placeholder="e.g. Restaurant, Hotel"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaUserTie className="text-purple-600" /><span>Customer Name</span>
+          </label>
+          <input
+            type="text"
+            name="customerName"
+            value={formData.customerName}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300"
+            placeholder="e.g. A Seafood Restaurant"
+          />
+        </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-8 p-8 max-w-4xl mx-auto bg-white/80 backdrop-blur-md rounded-xl shadow-2xl relative z-10"
-      >
-        <h1 className="text-3xl font-extrabold text-center text-blue-700 mb-6 drop-shadow-sm">
-          {editingBooking ? "Edit Booking" : "Add New Booking"}
-        </h1>
-
-        {/* General Information */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div>
-          <h2 className="text-xl font-bold text-black mb-4 border-b border-gray-300 pb-2">General Info</h2>
-          <div className="flex flex-wrap gap-6">
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Code <span className="text-red-500"></span>
-              </label>
-              <input
-                ref={firstInputRef}
-                type="text"
-                name="code"
-                placeholder="e.g., AB123"
-                value={formData.code}
-                onChange={handleChange}
-                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-md"
-              />
-            </div>
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Team <span className="text-red-500"></span>
-              </label>
-              <input
-                type="text"
-                name="team"
-                placeholder="Team Name"
-                value={formData.team}
-                onChange={handleChange}
-                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
-              />
-            </div>
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Customer Group <span className="text-red-500"></span>
-              </label>
-              <input
-                type="text"
-                name="customerGroup"
-                placeholder="e.g., VIP Group"
-                value={formData.customerGroup}
-                onChange={handleChange}
-                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
-              />
-            </div>
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Customer Name <span className="text-red-500"></span>
-              </label>
-              <input
-                type="text"
-                name="customerName"
-                placeholder="e.g., John Doe"
-                value={formData.customerName}
-                onChange={handleChange}
-                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
-              />
-            </div>
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaFish className="text-blue-500" /><span>Fish Size</span>
+          </label>
+          <ReactSelect
+              options={fishSizeOptions}
+              value={fishSizeOptions.find((o) => o.value === formData.fishSize)}
+              onChange={(opt) => handleSelectChange("fishSize", opt as SingleValue<SelectOption>)}
+            />
         </div>
-
-        {/* Fish Info */}
         <div>
-          <h2 className="text-xl font-bold text-black mb-4 border-b border-gray-300 pb-2">Fish Details</h2>
-          <div className="flex flex-wrap gap-6">
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Fish Size <span className="text-red-500"></span>
-              </label>
-              <Select
-                options={fishSizeOptions}
-                placeholder="Select size..."
-                value={fishSizeOptions.find((opt) => opt.value === formData.fishSize)}
-                onChange={(option) => handleSelectChange("fishSize", option as { value: string; label: string })}
-                className="rounded-md p-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
-              />
-            </div>
-
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Fish Type <span className="text-red-500"></span>
-              </label>
-              <Select
-                options={fishTypeOptions}
-                placeholder="Select type..."
-                value={fishTypeOptions.find((opt) => opt.value === formData.fishType)}
-                onChange={(option) => handleSelectChange("fishType", option as { value: string; label: string })}
-                className="rounded-md p-2 text-black focus:outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-lg"
-              />
-            </div>
-
-            <div className="flex flex-col sm:w-full md:w-1/4">
-              <label className="block text-sm font-medium text-black mb-1">
-                Price (THB) <span className="text-red-500"></span>
-              </label>
-              <input
-                type="text"
-                name="price"
-                placeholder="e.g., 500"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none hover:shadow-lg"
-              />
-              <span className="text-xs text-black-500 mt-1">Enter price in Thai Baht</span>
-            </div>
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaFish className="text-blue-500" /><span>Fish Type</span>
+          </label>
+          <ReactSelect
+            options={fishTypeOptions}
+            value={fishTypeOptions.find((o) => o.value === formData.fishType)}
+            onChange={(opt) => handleSelectChange("fishType", opt as SingleValue<SelectOption>)}
+          />
         </div>
-
-        {/* Daily Quantities */}
         <div>
-          <h2 className="text-xl font-bold text-black mt-8 mb-4 border-b border-gray-300 pb-2">Daily Quantities <span className="text-red-500"></span></h2>
-          <p className="text-sm text-black-600 mb-4">Please fill in the quantity for each day.</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-4">
-            {Object.keys(formData.dailyQuantities).map((day) => (
-              <div key={day} className="flex flex-col items-start">
-                <label className="text-sm text-black font-medium mb-1">{day}</label>
-                <input
-                  type="number"
-                  name={`day-${day}`}
-                  placeholder="0"
-                  value={formData.dailyQuantities[day]}
-                  onChange={handleChange}
-                  className="w-full p-2 bg-white/90 text-black border-2 border-emerald-900 rounded-md shadow-inner focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-300 hover:shadow-lg"
-                />
-              </div>
-            ))}
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaTag className="text-pink-500" /><span>Price (THB)</span>
+          </label>
+          <input
+            type="text"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-300"
+            placeholder="e.g. 1500"
+          />
         </div>
+        {/* <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
+            <FaCalendarAlt className="text-yellow-500" /><span>Week Number</span>
+          </label>
+          <input
+            type="number"
+            name="weekNumber"
+            value={formData.weekNumber || 0}
+            onChange={handleChange}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-300"
+            placeholder="e.g. 32"
+          />
+        </div> */}
+      </div>
 
-        {/* Buttons */}
-        <div className="flex space-x-4 pt-6">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Daily Quantities</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
+          {Object.entries(formData.dailyQuantities).map(([day, qty]) => (
+            <div key={day} className="flex flex-col bg-white p-3 rounded-md shadow-sm border border-gray-100">
+              <label className="text-sm text-gray-700 font-medium mb-1">{day}</label>
+              <input
+                type="number"
+                name={`day-${day}`}
+                value={qty}
+                onChange={handleChange}
+                className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex space-x-4 pt-8">
+        <button
+          type="submit"
+          className="flex-1 py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+        >
+          {editingBooking ? "Update Booking" : "Save Booking"}
+        </button>
+        {editingBooking && (
           <button
-            type="submit"
-            className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-900 text-white font-semibold rounded-lg hover:opacity-90 hover:scale-[1.02] focus:outline-none transition duration-300 shadow-lg"
+            type="button"
+            onClick={clearEditingBooking}
+            className="flex-1 py-3 bg-gray-300 text-black rounded hover:bg-gray-400 transition"
           >
-            {editingBooking ? "Update Booking" : "Save Booking"}
+            Cancel
           </button>
-          {editingBooking && (
-            <button
-              type="button"
-              onClick={clearEditingBooking}
-              className="flex-1 py-3 bg-gray-300 text-black rounded-lg hover:bg-gray-400 focus:outline-none transition duration-300 shadow-lg"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
+        )}
+      </div>
+    </form>
   );
 };
 

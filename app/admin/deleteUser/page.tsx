@@ -1,3 +1,4 @@
+// app/admin/deleteUser/page.tsx 
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,6 +8,7 @@ interface User {
   id: string;
   email: string;
   role: "admin" | "user";
+  passwordHash: string; // เพิ่ม field passwordHash
 }
 
 const DeleteUserPage = () => {
@@ -95,21 +97,16 @@ const DeleteUserPage = () => {
                 </div>
               </div>
             ) : users.length === 0 ? (
-              <div className="text-center py-12 text-black-500">No users found</div>
+              <div className="text-center py-12 text-black">No users found</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-red-50">
-                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">
-                        Select
-                      </th>
-                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">
-                        Username
-                      </th>
-                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">
-                        Role
-                      </th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Select</th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Username</th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Role</th>
+                      <th className="px-6 py-3 text-sm font-medium text-left text-red-600 border-b">Password (Hash)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -141,6 +138,7 @@ const DeleteUserPage = () => {
                             {user.role}
                           </span>
                         </td>
+                        <td className="px-6 py-4 text-sm text-black border-b break-all">{user.passwordHash}</td>
                       </tr>
                     ))}
                   </tbody>

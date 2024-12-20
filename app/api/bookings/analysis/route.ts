@@ -1,3 +1,4 @@
+// app/api/bookings/analysis/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient, Prisma } from "@prisma/client";
 
@@ -5,14 +6,17 @@ const prisma = new PrismaClient();
 
 interface BookingItem {
   fishType: string;
+  fishSize: string;
   createdAt: Date;
   dailyQuantities: Prisma.JsonValue;
   customerName: string | null;
+  weekNumber: number;
+  price: string;
 }
 
 export async function POST(req: Request) {
   try {
-    const { userId, role } = await req.json();
+    const { userId, role, costsPerWeek, year } = await req.json();
     if (!userId) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });
     }
@@ -24,9 +28,12 @@ export async function POST(req: Request) {
       where: filter,
       select: {
         fishType: true,
+        fishSize: true,
         createdAt: true,
         dailyQuantities: true,
         customerName: true,
+        weekNumber: true,
+        price: true
       },
     });
 
@@ -34,6 +41,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "No bookings found" }, { status: 404 });
     }
 
+    // คำนวณ weeklyBreakdown เดิม
     const weeklyBookings = processWeeklyBookings(bookings);
     const totalBookings = weeklyBookings.reduce((sum, w) => sum + w.totalQuantity, 0);
 
@@ -46,10 +54,12 @@ export async function POST(req: Request) {
       }
     }
 
+    // Fish Ranking
     const fishTotals: Record<string, number> = {};
     for (const booking of bookings) {
       const qty = totalFromDailyQuantities(booking.dailyQuantities);
-      fishTotals[booking.fishType] = (fishTotals[booking.fishType] || 0) + qty;
+      const fishKey = `${booking.fishType} (${booking.fishSize})`;
+      fishTotals[fishKey] = (fishTotals[fishKey] || 0) + qty;
     }
 
     const mostPopularFish = Object.keys(fishTotals).reduce((a, b) => (fishTotals[a] > fishTotals[b] ? a : b));
@@ -62,6 +72,7 @@ export async function POST(req: Request) {
       share: (total / totalBookings) * 100,
     }));
 
+    // Top Customers
     const customerTotals: Record<string, number> = {};
     for (const booking of bookings) {
       const qty = totalFromDailyQuantities(booking.dailyQuantities);
@@ -83,7 +94,18 @@ export async function POST(req: Request) {
       share: (total / totalBookings) * 100,
     }));
 
+    // Monthly Breakdown
     const monthlyBreakdown = processMonthlyBookings(bookings);
+
+    // Weekly Profit/Loss คำนวณโดยใช้ costsPerWeek
+    // ถ้าไม่มี costsPerWeek หรือไม่มีต้นทุนระบุสำหรับสัปดาห์นั้น ให้ใช้ cost ดีฟอลต์ เช่น 295
+    const defaultCost = 295;
+    const weeklyDataWithProfit = processWeeklyBookingsWithProfit(bookings, costsPerWeek || {}, defaultCost);
+
+    // สรุป profit รายเดือนและรายปี
+    const yearToUse = year ? Number(year) : new Date().getFullYear();
+    const monthlyProfit = calculateMonthlyProfit(bookings, costsPerWeek || {}, defaultCost, yearToUse);
+    const yearlyProfit = monthlyProfit.reduce((sum, m) => sum + m.totalProfitOrLoss, 0);
 
     const result = {
       totalBookings,
@@ -94,6 +116,9 @@ export async function POST(req: Request) {
       fishRanking,
       customerDistribution,
       monthlyBreakdown,
+      weeklyDataWithProfit,
+      monthlyProfit,   // รายเดือน
+      yearlyProfit     // รวมทั้งปี
     };
 
     return NextResponse.json(result, { status: 200 });
@@ -111,7 +136,8 @@ function processWeeklyBookings(bookings: BookingItem[]) {
     {};
 
   for (const booking of bookings) {
-    const weekNumber = getWeekNumber(new Date(booking.createdAt));
+    const weekNumber = booking.weekNumber;
+
     if (!groupedByWeek[weekNumber]) {
       groupedByWeek[weekNumber] = {
         weekNumber,
@@ -123,6 +149,41 @@ function processWeeklyBookings(bookings: BookingItem[]) {
 
     const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
     groupedByWeek[weekNumber].totalQuantity += totalForBooking;
+  }
+
+  return Object.values(groupedByWeek).sort((a, b) => a.weekNumber - b.weekNumber);
+}
+
+function processWeeklyBookingsWithProfit(bookings: BookingItem[], costsPerWeek: Record<number, number>, defaultCost: number) {
+  interface WeeklyData {
+    weekNumber: number;
+    weekStart: string;
+    weekEnd: string;
+    totalQuantity: number;
+    totalProfitOrLoss: number;
+  }
+
+  const groupedByWeek: Record<number, WeeklyData> = {};
+
+  for (const booking of bookings) {
+    const weekNumber = booking.weekNumber;
+    if (!groupedByWeek[weekNumber]) {
+      groupedByWeek[weekNumber] = {
+        weekNumber,
+        weekStart: getWeekStartDate(weekNumber),
+        weekEnd: getWeekEndDate(weekNumber),
+        totalQuantity: 0,
+        totalProfitOrLoss: 0,
+      };
+    }
+
+    const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
+    const bookingPrice = parseFloat(booking.price);
+    const costForThisWeek = costsPerWeek[weekNumber] !== undefined ? costsPerWeek[weekNumber] : defaultCost;
+    const profitOrLossForBooking = (bookingPrice - costForThisWeek) * totalForBooking;
+
+    groupedByWeek[weekNumber].totalQuantity += totalForBooking;
+    groupedByWeek[weekNumber].totalProfitOrLoss += profitOrLossForBooking;
   }
 
   return Object.values(groupedByWeek).sort((a, b) => a.weekNumber - b.weekNumber);
@@ -144,18 +205,38 @@ function processMonthlyBookings(bookings: BookingItem[]) {
   return monthlyTotals.map((total, index) => ({ month: index + 1, totalQuantity: total }));
 }
 
+// ฟังก์ชั่นคำนวณ profit ต่อเดือนและต่อปี
+function calculateMonthlyProfit(bookings: BookingItem[], costsPerWeek: Record<number, number>, defaultCost: number, year: number) {
+  // สร้าง structure สำหรับเก็บ profit รายเดือน
+  interface MonthlyProfit {
+    month: number;
+    totalProfitOrLoss: number;
+  }
+
+  const monthlyData: MonthlyProfit[] = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, totalProfitOrLoss: 0 }));
+
+  for (const booking of bookings) {
+    const date = new Date(booking.createdAt);
+    if (date.getFullYear() === year) {
+      const monthIndex = date.getMonth();
+      const totalForBooking = totalFromDailyQuantities(booking.dailyQuantities);
+      const bookingPrice = parseFloat(booking.price);
+      const costForThisWeek = costsPerWeek[booking.weekNumber] !== undefined ? costsPerWeek[booking.weekNumber] : defaultCost;
+      const profitOrLoss = (bookingPrice - costForThisWeek) * totalForBooking;
+
+      monthlyData[monthIndex].totalProfitOrLoss += profitOrLoss;
+    }
+  }
+
+  return monthlyData;
+}
+
 function totalFromDailyQuantities(dailyQuantities: Prisma.JsonValue): number {
   if (typeof dailyQuantities === "object" && dailyQuantities !== null && !Array.isArray(dailyQuantities)) {
     const dq = dailyQuantities as Record<string, number>;
     return Object.values(dq).reduce((sum, qty) => sum + qty, 0);
   }
   return 0;
-}
-
-function getWeekNumber(date: Date): number {
-  const startDate = new Date(date.getFullYear(), 0, 1);
-  const diff = date.getTime() - startDate.getTime();
-  return Math.ceil((diff / (1000 * 3600 * 24) + 1) / 7);
 }
 
 function getWeekStartDate(weekNumber: number): string {

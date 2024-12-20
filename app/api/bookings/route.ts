@@ -4,20 +4,23 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET: ดึง bookings ของ user ตาม userId ที่ส่งมาทาง header
-export async function GET(req: Request) {
-  const userId = req.headers.get("userId");
-  if (!userId) {
-    return NextResponse.json({ message: "User ID is required" }, { status: 400 });
-  }
+// ฟังก์ชันคำนวณสัปดาห์ ISO
+const getISOWeekNumber = (date: Date): number => {
+  const tempDate = new Date(date.getTime());
+  tempDate.setUTCDate(tempDate.getUTCDate() + 4 - (tempDate.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
+  return Math.ceil((((tempDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+};
 
-  const userIdNum = Number(userId);
-
+// GET: ดึง bookings เฉพาะสัปดาห์ปัจจุบัน (หากต้องการปรับคืนสู่ดึงทั้งหมดหรือตาม userId สามารถแก้ไขได้)
+export async function GET() {
   try {
-    const bookings = await prisma.booking.findMany({
-      where: { userId: userIdNum },
-    });
+    const now = new Date();
+    const currentWeekNumber = getISOWeekNumber(now);
 
+    const bookings = await prisma.booking.findMany({
+      where: { weekNumber: currentWeekNumber }
+    });
     return NextResponse.json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);
@@ -25,20 +28,11 @@ export async function GET(req: Request) {
   }
 }
 
-// ฟังก์ชันคำนวณ weekNumber จากวันที่ (ตัวอย่างใช้ ISO week number)
-const getISOWeekNumber = (date: Date): number => {
-  const tempDate = new Date(date.getTime());
-  tempDate.setUTCDate(tempDate.getUTCDate() + 4 - (tempDate.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil((((tempDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  return weekNo;
-};
-
+// POST: สร้าง booking ใหม่
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // ตรวจสอบว่ามีฟิลด์ที่จำเป็นทั้งหมดหรือไม่
     if (
       !body.code ||
       !body.team ||
@@ -51,11 +45,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing or invalid required fields" }, { status: 400 });
     }
 
-    // คำนวณ weekNumber จากวันที่แรกใน dailyQuantities
-    const dates = Object.keys(body.dailyQuantities).map(dateStr => new Date(dateStr));
+    const dates = Object.keys(body.dailyQuantities).map((dateStr: string) => new Date(dateStr));
     if (dates.length === 0) {
       return NextResponse.json({ error: "No dates provided in dailyQuantities" }, { status: 400 });
     }
+
     const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
     const weekNumber = getISOWeekNumber(minDate);
 
@@ -83,8 +77,7 @@ export async function POST(req: Request) {
   }
 }
 
-// DELETE: ลบ booking ตาม id และ code ที่ส่งมาใน query string
-// ตัวอย่างการเรียก: /api/bookings?id=123&code=dogfuse
+// DELETE: ลบ booking ตาม id
 export async function DELETE(req: Request) {
   try {
     const url = new URL(req.url);
@@ -101,5 +94,3 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-
-

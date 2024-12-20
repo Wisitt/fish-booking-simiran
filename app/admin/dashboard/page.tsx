@@ -1,3 +1,4 @@
+// app/admin/dashboard/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import {
 } from "chart.js";
 import { Line, Pie } from "react-chartjs-2";
 import { FaFish, FaChartLine, FaCalendarAlt } from "react-icons/fa";
+import YearMonthWeekSelector from "./components/YearMonthWeekSelector";
 
 ChartJS.register(
   CategoryScale,
@@ -58,6 +60,19 @@ interface MonthlyData {
   totalQuantity: number;
 }
 
+interface WeeklyProfitDataRaw {
+  weekNumber: number;
+  weekStart: string;
+  weekEnd: string;
+  totalQuantity: number;
+  totalProfitOrLoss: number;
+}
+
+interface WeeklyProfitData extends WeeklyProfitDataRaw {
+  year: number;
+  month: number;
+}
+
 interface AnalysisResult {
   totalBookings: number;
   growthRate: number;
@@ -67,12 +82,15 @@ interface AnalysisResult {
   fishRanking?: FishRank[];
   customerDistribution?: CustomerDist[];
   monthlyBreakdown?: MonthlyData[];
+  weeklyDataWithProfit?: WeeklyProfitDataRaw[];
 }
 
 const AdminDashboard = () => {
   const [role, setRole] = useState<string | null>(null);
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
+  const [ProfitanalysisData, setProfitAnalysisData] = useState<WeeklyProfitData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [costsPerWeek, setCostsPerWeek] = useState<Record<number, number>>({});
 
   const router = useRouter();
 
@@ -82,6 +100,12 @@ const AdminDashboard = () => {
       router.push("/login");
     } else {
       setRole(storedRole);
+
+      const savedCosts = localStorage.getItem("costsPerWeek");
+      if (savedCosts) {
+        setCostsPerWeek(JSON.parse(savedCosts));
+      }
+
       fetchData();
     }
   }, [router]);
@@ -92,26 +116,39 @@ const AdminDashboard = () => {
       console.error("User ID not found");
       return;
     }
-  
+
+    setLoading(true);
+
     try {
       const response = await fetch("/api/bookings/analysis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, role: "admin" }),
+        body: JSON.stringify({
+          userId,
+          role: "admin",
+          costsPerWeek
+        }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-  
+
       const data: AnalysisResult = await response.json();
       console.log("API Response:", data);
-  
-      // Validate customerDistribution
-      if (!Array.isArray(data.customerDistribution) || data.customerDistribution.length === 0) {
-        console.warn("Customer distribution data is missing or empty.");
-      }
-  
+
+      const rawData = data.weeklyDataWithProfit || [];
+
+      // คำนวณ year, month จาก weekStart
+      const processedData: WeeklyProfitData[] = rawData.map(item => {
+        const d = new Date(item.weekStart);
+        const year = d.getFullYear();
+        const month = d.getMonth() + 1;
+        return { ...item, year, month };
+      });
+
+      setProfitAnalysisData(processedData);
+
       setAnalysisData({
         ...data,
         weeklyBreakdown: data.weeklyBreakdown || [],
@@ -119,6 +156,7 @@ const AdminDashboard = () => {
         customerDistribution: data.customerDistribution || [],
         monthlyBreakdown: data.monthlyBreakdown || [],
       });
+
     } catch (error) {
       console.error("Error fetching data:", error);
       setAnalysisData(null);
@@ -126,11 +164,10 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
-  
 
   if (!role) return null;
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (!analysisData) return <div className="text-center text-red-600">Failed to load data. Please try again later.</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen"><div className="text-center font-semibold text-gray-700">Loading...</div></div>;
+  if (!analysisData) return <div className="flex justify-center items-center h-screen text-red-600 font-bold">Failed to load data. Please try again later.</div>;
 
   const {
     totalBookings,
@@ -168,8 +205,8 @@ const AdminDashboard = () => {
     labels: customerLabels.length ? customerLabels : ["No Data"],
     datasets: [
       {
-        data: customerValues.length ? customerValues : [1], // Fallback to a single slice
-        backgroundColor: ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#3B82F6", "#9333EA"],
+        data: customerValues.length ? customerValues : [1],
+        backgroundColor: ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#3B82F6", "#9333EA", "#6366F1", "#14B8A6"],
       },
     ],
   };
@@ -190,90 +227,156 @@ const AdminDashboard = () => {
       },
     ],
   };
-return (
-  <div className="container mx-auto px-6 py-8">
-    {/* Header */}
-    <header className="flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold text-black">Admin Dashboard</h1>
-    </header>
 
-    {/* KPI Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-      <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
-        <FaChartLine className="text-blue-500 w-10 h-10" />
-        <div>
-          <h3 className="text-lg font-semibold text-black">Total Bookings</h3>
-          <p className="text-4xl font-bold text-black">{totalBookings}</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-10">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 bg-white bg-opacity-90 rounded-lg shadow-xl">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h1 className="text-4xl font-extrabold text-gray-800 mb-4 md:mb-0">Admin Dashboard</h1>
+        </header>
+
+        {/* YearMonthWeekSelector */}
+        <div className="mb-8">
+          <YearMonthWeekSelector
+            ProfitanalysisData={ProfitanalysisData}
+            costsPerWeek={costsPerWeek}
+            setCostsPerWeek={setCostsPerWeek}
+            fetchData={fetchData}
+          />
+        </div>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="p-6 bg-white rounded-lg shadow-lg flex items-center space-x-4 hover:bg-gray-50 transition">
+            <FaChartLine className="text-blue-500 w-8 h-8" />
+            <div>
+              <h3 className="text-sm font-medium text-gray-700">Total Bookings</h3>
+              <p className="text-2xl font-bold text-gray-800">{totalBookings}</p>
+            </div>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-lg flex items-center space-x-4 hover:bg-gray-50 transition">
+            <FaCalendarAlt className="text-green-500 w-8 h-8" />
+            <div>
+              <h3 className="text-sm font-medium text-gray-700">Growth Rate</h3>
+              <p className="text-2xl font-bold text-gray-800">{growthRate.toFixed(2)}%</p>
+            </div>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-lg flex items-center space-x-4 hover:bg-gray-50 transition">
+            <FaFish className="text-purple-500 w-8 h-8" />
+            <div>
+              <h3 className="text-sm font-medium text-gray-700">Most Popular Fish</h3>
+              <p className="text-lg font-medium text-gray-900">{mostPopularFish}</p>
+            </div>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Top 3 Customers</h3>
+            <ul className="space-y-1">
+              {topCustomers.map((c, i) => (
+                <li key={i} className="text-gray-800 flex justify-between">
+                  <span className="font-medium">{c.customerName}:</span> <span>{c.totalQuantity}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Weekly Chart */}
+          <div className="bg-white rounded-lg shadow-lg p-6 hover:bg-gray-50 transition">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Weekly Bookings Trend</h3>
+            <div className="w-full h-80">
+              <Line
+                data={weeklyChartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'top',
+                    },
+                    title: {
+                      display: false,
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Monthly Chart */}
+          <div className="bg-white rounded-lg shadow-lg p-6 hover:bg-gray-50 transition">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Seasonality (Monthly Bookings)</h3>
+            <div className="w-full h-80">
+              <Line
+                data={monthlyChartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'top',
+                    },
+                    title: {
+                      display: false,
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Customer Distribution */}
+          <div className="bg-white rounded-lg shadow-lg p-6 hover:bg-gray-50 transition">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Customer Distribution</h3>
+            <div className="w-full h-80">
+              <Pie
+                data={customerPieData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                    },
+                    title: {
+                      display: false,
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Fish Ranking */}
+          <div className="bg-white rounded-lg shadow-lg p-6 hover:bg-gray-50 transition">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Fish Ranking (Type & Size)</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="py-3 px-4 border text-left">Fish (Type & Size)</th>
+                    <th className="py-3 px-4 border text-left">Total Quantity</th>
+                    <th className="py-3 px-4 border text-left">% Share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fishRanking.map((fish, index) => (
+                    <tr key={index} className="hover:bg-gray-50 transition">
+                      <td className="py-3 px-4 border">{fish.fish}</td>
+                      <td className="py-3 px-4 border text-right">{fish.total}</td>
+                      <td className="py-3 px-4 border text-right">{fish.share.toFixed(2)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
-        <FaCalendarAlt className="text-green-500 w-10 h-10" />
-        <div>
-          <h3 className="text-lg font-semibold text-black">Growth Rate</h3>
-          <p className="text-4xl font-bold text-black">{growthRate.toFixed(2)}%</p>
-        </div>
-      </div>
-      <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg flex items-center space-x-4">
-        <FaFish className="text-purple-500 w-10 h-10" />
-        <div>
-          <h3 className="text-lg font-semibold text-black">Most Popular Fish</h3>
-          <p className="text-xl font-medium text-black">{mostPopularFish}</p>
-        </div>
-      </div>
-      <div className="p-6 rounded-lg bg-white bg-opacity-30 backdrop-blur-lg shadow-lg">
-        <h3 className="text-lg font-semibold text-black">Top 3 Customers</h3>
-        <ul className="space-y-1 mt-2">
-          {topCustomers.map((c, i) => (
-            <li key={i} className="text-black">
-              <span className="font-medium">{c.customerName}:</span> {c.totalQuantity}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
-
-    {/* Weekly Chart */}
-    <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black">Weekly Bookings Trend</h3>
-      <Line data={weeklyChartData} />
-    </div>
-
-    {/* Fish Ranking */}
-    <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black">Fish Ranking</h3>
-      <table className="min-w-full table-auto">
-        <thead>
-          <tr className="bg-gray-100 border-b">
-            <th className="text-left py-3 px-4 font-medium text-black">Fish Type</th>
-            <th className="text-left py-3 px-4 font-medium text-black">Total Quantity</th>
-            <th className="text-left py-3 px-4 font-medium text-black">% Share</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fishRanking.map((fish, index) => (
-            <tr key={index} className="border-b hover:bg-gray-50 transition">
-              <td className="py-3 px-4 text-black">{fish.fish}</td>
-              <td className="py-3 px-4 text-black">{fish.total}</td>
-              <td className="py-3 px-4 text-black">{fish.share.toFixed(2)}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Customer Distribution */}
-    <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black">Customer Distribution</h3>
-      <Pie data={customerPieData} />
-    </div>
-
-    {/* Monthly Chart */}
-    <div className="bg-white bg-opacity-50 backdrop-blur-lg rounded-lg shadow-lg p-6 mb-8">
-      <h3 className="text-xl font-semibold mb-4 text-black">Seasonality (Monthly Bookings)</h3>
-      <Line data={monthlyChartData} />
-    </div>
-  </div>
-);
+  );
 };
 
 export default AdminDashboard;
