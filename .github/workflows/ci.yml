@@ -10,7 +10,10 @@ on:
 
 jobs:
   build:
-    if: "! contains(github.event.head_commit.message, '[skip ci]') && ! contains(github.event.head_commit.message, '[ci skip]')"
+    # Skip CI if commit message or PR metadata contains [skip ci] or [ci skip]
+    if: |
+      github.event_name == 'push' && ! contains(join(fromJSON(toJSON(github.event.commits)).message, ' '), '[skip ci]') ||
+      github.event_name == 'pull_request' && ! (contains(github.event.pull_request.title, '[skip ci]') || contains(github.event.pull_request.body, '[skip ci]'))
 
     runs-on: ubuntu-latest
 
@@ -38,5 +41,5 @@ jobs:
         uses: amondnet/vercel-action@v20
         with: 
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod' # ดีพลอยเป็น production
+          vercel-args: '--prod'
           working-directory: ./
