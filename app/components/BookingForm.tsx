@@ -1,10 +1,9 @@
-// app/components/BookingForm.tsx
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { getWeekDays } from "@/app/lib/weekUtils";
-import { SingleValue } from 'react-select';
+import { SingleValue } from "react-select";
 import { FaFish, FaUserTie, FaTag, FaUsers, FaCodeBranch } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,8 +13,8 @@ interface SelectOption {
   label: string;
 }
 
-const ReactSelect = dynamic(() => import('react-select'), {
-  ssr: false
+const ReactSelect = dynamic(() => import("react-select"), {
+  ssr: false,
 });
 
 const fishSizeOptions: SelectOption[] = [
@@ -43,7 +42,7 @@ interface Booking {
   userId: number;
 }
 
-interface FormData extends Omit<Booking, "id"> {}
+type FormData = Omit<Booking, "id">;
 
 interface Props {
   setBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
@@ -52,7 +51,12 @@ interface Props {
   firstInputRef: React.RefObject<HTMLInputElement>;
 }
 
-const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditingBooking, firstInputRef }) => {
+const BookingForm: React.FC<Props> = ({
+  setBookings,
+  editingBooking,
+  clearEditingBooking,
+  firstInputRef,
+}) => {
   const weekDays = useMemo(() => getWeekDays(), []);
 
   const [formData, setFormData] = useState<FormData>({
@@ -63,7 +67,10 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
     fishSize: "",
     fishType: "",
     price: "",
-    dailyQuantities: weekDays.reduce((acc, day) => ({ ...acc, [day]: 0 }), {}),
+    dailyQuantities: weekDays.reduce(
+      (acc, day) => ({ ...acc, [day]: 0 }),
+      {}
+    ),
     weekNumber: 0,
     userId: 0,
   });
@@ -80,7 +87,10 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
         fishSize: "",
         fishType: "",
         price: "",
-        dailyQuantities: weekDays.reduce((acc, day) => ({ ...acc, [day]: 0 }), {}),
+        dailyQuantities: weekDays.reduce(
+          (acc, day) => ({ ...acc, [day]: 0 }),
+          {}
+        ),
         weekNumber: 0,
         userId: 0,
       });
@@ -110,14 +120,22 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.code || !formData.team || !formData.customerGroup || !formData.customerName || !formData.price) {
+    if (
+      !formData.code ||
+      !formData.team ||
+      !formData.customerGroup ||
+      !formData.customerName ||
+      !formData.price
+    ) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     try {
       const method = editingBooking ? "PUT" : "POST";
-      const url = editingBooking ? `/api/bookings/${editingBooking.id}` : "/api/bookings";
+      const url = editingBooking
+        ? `/api/bookings/${editingBooking.id}`
+        : "/api/bookings";
       const userId = localStorage.getItem("userId");
 
       if (!userId) {
@@ -137,9 +155,13 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
         throw new Error(data.error || "Failed to save booking");
       }
 
-      editingBooking
-        ? setBookings((prev) => prev.map((b) => (b.id === data.id ? data : b)))
-        : setBookings((prev) => [...prev, data]);
+      if (editingBooking) {
+        setBookings((prev) =>
+          prev.map((b) => (b.id === data.id ? data : b))
+        );
+      } else {
+        setBookings((prev) => [...prev, data]);
+      }
 
       toast.success(editingBooking ? "Booking updated!" : "Booking saved!");
       clearEditingBooking?.();
@@ -152,7 +174,10 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200"
+      >
         <h1 className="text-2xl font-bold text-center text-blue-800 mb-4">
           {editingBooking ? "Edit Booking" : "Add New Booking"}
         </h1>
@@ -160,7 +185,8 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaCodeBranch className="text-blue-600" /><span>Code</span>
+              <FaCodeBranch className="text-blue-600" />
+              <span>Code</span>
             </label>
             <input
               ref={firstInputRef}
@@ -174,7 +200,8 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaUsers className="text-green-600" /><span>Team</span>
+              <FaUsers className="text-green-600" />
+              <span>Team</span>
             </label>
             <input
               type="text"
@@ -187,7 +214,8 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaUserTie className="text-purple-600" /><span>Customer Group</span>
+              <FaUserTie className="text-purple-600" />
+              <span>Customer Group</span>
             </label>
             <input
               type="text"
@@ -200,7 +228,8 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaUserTie className="text-purple-600" /><span>Customer Name</span>
+              <FaUserTie className="text-purple-600" />
+              <span>Customer Name</span>
             </label>
             <input
               type="text"
@@ -216,27 +245,38 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaFish className="text-blue-500" /><span>Fish Size</span>
+              <FaFish className="text-blue-500" />
+              <span>Fish Size</span>
             </label>
             <ReactSelect
               options={fishSizeOptions}
-              value={fishSizeOptions.find((o) => o.value === formData.fishSize)}
-              onChange={(opt) => handleSelectChange("fishSize", opt as SingleValue<SelectOption>)}
+              value={fishSizeOptions.find(
+                (o) => o.value === formData.fishSize
+              )}
+              onChange={(opt) =>
+                handleSelectChange("fishSize", opt as SingleValue<SelectOption>)
+              }
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaFish className="text-blue-500" /><span>Fish Type</span>
+              <FaFish className="text-blue-500" />
+              <span>Fish Type</span>
             </label>
             <ReactSelect
               options={fishTypeOptions}
-              value={fishTypeOptions.find((o) => o.value === formData.fishType)}
-              onChange={(opt) => handleSelectChange("fishType", opt as SingleValue<SelectOption>)}
+              value={fishTypeOptions.find(
+                (o) => o.value === formData.fishType
+              )}
+              onChange={(opt) =>
+                handleSelectChange("fishType", opt as SingleValue<SelectOption>)
+              }
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center space-x-2">
-              <FaTag className="text-pink-500" /><span>Price (THB)</span>
+              <FaTag className="text-pink-500" />
+              <span>Price (THB)</span>
             </label>
             <input
               type="text"
@@ -250,11 +290,18 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Daily Quantities</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+            Daily Quantities
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
             {Object.entries(formData.dailyQuantities).map(([day, qty]) => (
-              <div key={day} className="flex flex-col bg-white p-3 rounded-md shadow-sm border border-gray-100">
-                <label className="text-sm text-gray-700 font-medium mb-1">{day}</label>
+              <div
+                key={day}
+                className="flex flex-col bg-white p-3 rounded-md shadow-sm border border-gray-100"
+              >
+                <label className="text-sm text-gray-700 font-medium mb-1">
+                  {day}
+                </label>
                 <input
                   type="number"
                   name={`day-${day}`}
@@ -288,7 +335,6 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
             </button>
           )}
         </div>
-
       </form>
     </>
   );

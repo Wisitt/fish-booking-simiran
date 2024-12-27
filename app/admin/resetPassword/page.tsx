@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Key } from "lucide-react"; // ใช้ไอคอนจาก lucide-react เป็นตัวล็อกรหัสผ่าน
+import { Key } from "lucide-react"; // Icon for resetting passwords
 
 interface User {
   id: number;
@@ -47,8 +47,12 @@ export default function ResetPasswordPage() {
 
       setMessage("Password reset successfully!");
       setNewPassword("");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     }
   };
 
