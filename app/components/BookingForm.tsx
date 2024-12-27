@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { getWeekDays } from "@/app/lib/weekUtils";
 import { SingleValue } from 'react-select';
-import { FaFish, FaUserTie, FaCalendarAlt, FaTag, FaUsers, FaCodeBranch } from "react-icons/fa";
+import { FaFish, FaUserTie, FaTag, FaUsers, FaCodeBranch } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -152,7 +152,7 @@ const BookingForm: React.FC<Props> = ({ setBookings, editingBooking, clearEditin
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-      <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 backdrop-blur-lg  shadow-2xl border border-gray-200">
+      <form onSubmit={handleSubmit} className="space-y-8 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200">
         <h1 className="text-2xl font-bold text-center text-blue-800 mb-4">
           {editingBooking ? "Edit Booking" : "Add New Booking"}
         </h1>

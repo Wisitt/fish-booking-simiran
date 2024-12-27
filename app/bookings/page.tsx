@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import BookingForm from "../components/BookingForm";
 import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
