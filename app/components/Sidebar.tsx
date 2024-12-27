@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     <div
       className={`fixed left-0 top-0 z-50 h-screen transition-all duration-300 ease-in-out ${
         isOpen ? "w-64" : "w-20"
-      } shadow-xl rounded-r-2xl overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-sky-600 relative font-sans`}
+      } shadow-xl  overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-sky-600 relative font-sans`}
     >
       {/* Decorative Bubbles */}
       <div className="absolute inset-0 z-0 overflow-hidden">

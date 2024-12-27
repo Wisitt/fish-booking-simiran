@@ -7,29 +7,31 @@ const prisma = new PrismaClient();
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    if (!body.code || !body.team || !body.customerGroup || !body.customerName || !body.price || !body.userId) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const { id, userId, ...updateData } = body;
+
+    if (!id || !userId) {
+      return NextResponse.json({ error: "Missing required fields: id or userId" }, { status: 400 });
+    }
+
+    const existingBooking = await prisma.booking.findUnique({ where: { id: Number(id) } });
+
+    if (!existingBooking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (existingBooking.userId !== Number(userId)) {
+      return NextResponse.json({ error: "You are not authorized to edit this booking" }, { status: 403 });
     }
 
     const updatedBooking = await prisma.booking.update({
-      where: { id: Number(body.id) },
-      data: {
-        code: body.code,
-        team: body.team,
-        customerGroup: body.customerGroup,
-        customerName: body.customerName,
-        fishSize: body.fishSize,
-        fishType: body.fishType,
-        price: body.price,
-        dailyQuantities: body.dailyQuantities,
-        userId: Number(body.userId),
-      },
+      where: { id: Number(id) },
+      data: updateData,
     });
 
     return NextResponse.json(updatedBooking, { status: 200 });
   } catch (error) {
     console.error("Error updating booking:", error);
-    return NextResponse.json({ error: "Error saving booking" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 

@@ -4,6 +4,10 @@
 import { useState, useEffect, useRef } from "react";
 import BookingForm from "../components/BookingForm";
 import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Booking {
   id: number;
@@ -15,6 +19,7 @@ interface Booking {
   dailyQuantities: Record<string, number>;
   fishSize: string;
   fishType: string;
+  userId: number;
 }
 
 export default function BookingPage() {
@@ -22,49 +27,52 @@ export default function BookingPage() {
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [searchCode, setSearchCode] = useState("");
   const firstInputRef = useRef<HTMLInputElement | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    setCurrentUserId(userId ? Number(userId) : null);
+
     const fetchBookings = async () => {
-      const userId = localStorage.getItem("userId");
-      if (!userId) {
-        alert("User not logged in.");
-        return;
+      try {
+        const response = await fetch("/api/bookings");
+        if (response.ok) {
+          const data = await response.json();
+          setBookings(data);
+        } else {
+          throw new Error("Failed to fetch bookings");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error fetching bookings.");
       }
-
-      const response = await fetch("/api/bookings", {
-        method: "GET",
-        headers: {
-          "userId": userId,
-        },
-      });
-
-      if (!response.ok) {
-        console.error("Failed to fetch bookings");
-        return;
-      }
-
-      const data = await response.json();
-      setBookings(data);
     };
 
     fetchBookings();
   }, []);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
     try {
-      const response = await fetch(`/api/bookings?id=${id}`, {
+      const response = await fetch(`/api/bookings?id=${deleteId}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        setBookings((prev) => prev.filter((b) => b.id !== id));
-        alert("Booking deleted successfully!");
+        setBookings((prev) => prev.filter((b) => b.id !== deleteId));
+        toast.success("Booking deleted successfully!");
       } else {
-        alert("Error deleting booking.");
+        throw new Error("Error deleting booking.");
       }
     } catch (error) {
-      console.error("Error deleting booking:", error);
-      alert("Error deleting booking.");
+      console.error(error);
+      toast.error("Failed to delete booking.");
+    } finally {
+      setDeleteId(null);
+      setIsDialogOpen(false); // Close the dialog after deletion
     }
   };
 
@@ -76,13 +84,13 @@ export default function BookingPage() {
     setEditingBooking(null);
   };
 
-  // ทำการกรอง bookings ตามค่า searchCode
-  const filteredBookings = bookings.filter(b => 
+  const filteredBookings = bookings.filter((b) =>
     b.code.toLowerCase().includes(searchCode.toLowerCase())
   );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-green-50 p-12">
+      <ToastContainer />
       <h1 className="text-4xl font-extrabold mb-6 text-center text-blue-700">Fish Booking System</h1>
       <div className="max-w-5xl mx-auto mb-10">
         <BookingForm
@@ -93,7 +101,6 @@ export default function BookingPage() {
         />
       </div>
 
-      {/* Search Bar */}
       <div className="flex items-center space-x-2 max-w-sm mb-4">
         <FaSearch className="text-gray-500" />
         <input
@@ -106,32 +113,33 @@ export default function BookingPage() {
       </div>
 
       <h2 className="text-2xl font-semibold mb-4 text-blue-600">Your Bookings</h2>
-      <div className="overflow-x-auto bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4">
+      <div className="overflow-x-auto bg-white rounded-xl shadow-lg p-4">
         <table className="min-w-full border-collapse text-left">
           <thead>
-            <tr className="border-b bg-gray-100">
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Code</th>
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Team</th>
+            <tr className="bg-gray-100">
+              <th className="py-3 px-4 font-medium text-gray-700">Code</th>
+              <th className="py-3 px-4 font-medium text-gray-700">Team</th>
               <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Customer Group</th>
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Customer Name</th>
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Fish Size</th>
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Fish Type</th>
-              <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Price (THB)</th>
+              <th className="py-3 px-4 font-medium text-gray-700">Customer Name</th>
+              <th className="py-3 px-4 font-medium text-gray-700">Fish Size</th>
+              <th className="py-3 px-4 font-medium text-gray-700">Fish Type</th>
+              <th className="py-3 px-4 font-medium text-gray-700">Price</th>
               <th className="py-3 px-4 font-medium text-gray-700 whitespace-nowrap">Daily Quantities</th>
-              <th className="py-3 px-4 font-medium text-gray-700 text-center whitespace-nowrap">Actions</th>
+              <th className="py-3 px-4 font-medium text-gray-700 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredBookings.map((booking, index) => (
-              <tr key={booking.id} className={`border-b hover:bg-gray-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                <td className="py-3 px-4 text-blue-800 font-bold whitespace-nowrap">{booking.code}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.team}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.customerGroup}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.customerName}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.fishSize}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.fishType}</td>
-                <td className="py-3 px-4 text-gray-800 whitespace-nowrap">{booking.price}</td>
-                <td className="py-3 px-4 text-gray-800">
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking) => (
+                <tr key={booking.id} className="hover:bg-gray-50">
+                  <td className="py-3 px-4 border">{booking.code}</td>
+                  <td className="py-3 px-4 border">{booking.team}</td>
+                  <td className="py-3 px-4 border">{booking.customerGroup}</td>
+                  <td className="py-3 px-4 border">{booking.customerName}</td>
+                  <td className="py-3 px-4 border">{booking.fishSize}</td>
+                  <td className="py-3 px-4 border">{booking.fishType}</td>
+                  <td className="py-3 px-4 border">{booking.price}</td>
+                  <td className="py-3 px-4 text-gray-800">
                   <div className="overflow-x-auto">
                     <table className="text-center border-collapse">
                       <thead>
@@ -153,32 +161,36 @@ export default function BookingPage() {
                     </table>
                   </div>
                 </td>
-                <td className="py-3 px-4 text-center whitespace-nowrap">
-                  <div className="flex justify-center space-x-2">
-                    <button
-                      onClick={() => handleEdit(booking)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 flex items-center space-x-1"
-                      title="Edit Booking"
-                    >
-                      <FaEdit />
-                      <span className="hidden md:inline">Edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(booking.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 flex items-center space-x-1"
-                      title="Delete Booking"
-                    >
-                      <FaTrash />
-                      <span className="hidden md:inline">Delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-
-            {filteredBookings.length === 0 && (
+                  <td className="py-3 px-4 border text-center">
+                    {currentUserId === booking.userId && (
+                      <div className="flex justify-center space-x-2">
+                        <Button
+                          onClick={() => handleEdit(booking)}
+                          variant="destructive"
+                          className="flex items-center space-x-1 bg-yellow-200 border-yellow-300 text-yellow-700 hover:bg-yellow-100" 
+                        >
+                          <FaEdit />  
+                          <span>Edit</span>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            setDeleteId(booking.id);
+                            setIsDialogOpen(true);
+                          }}
+                          className="flex items-center space-x-1"
+                        >
+                          <FaTrash />
+                          <span>Delete</span>
+                        </Button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={9} className="text-center py-6 text-gray-500">
+                <td colSpan={8} className="text-center py-6 text-gray-500">
                   No bookings found.
                 </td>
               </tr>
@@ -186,6 +198,25 @@ export default function BookingPage() {
           </tbody>
         </table>
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this booking? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Confirm
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
