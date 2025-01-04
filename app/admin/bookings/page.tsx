@@ -1,13 +1,14 @@
-
+// app/admin/bookings/page.tsx 
 "use client";
 
-import SummaryTable from "@/app/components/SummaryTable";
+import SummaryTable from "@/app/components/admin/SummaryTable";
+
 
 const AdminBookingsPage = () => {
   return (
-    <div className="container p-3 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 p-4 lg:p-8">
       <SummaryTable />
-    </div>
+      </div>
   );
 };
 

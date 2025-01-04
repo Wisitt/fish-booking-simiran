@@ -8,27 +8,40 @@ datasource db {
 }
 
 model Booking {
-  id             Int      @id @default(autoincrement())
-  code           String
-  team           String
-  customerGroup  String
-  customerName   String
-  price          String
-  dailyQuantities Json    @default("{}")
-  fishSize       String
-  fishType       String
-  weekNumber Int @default(0)
-  createdAt      DateTime @default(now())
-  userId         Int      // Relation to User
-  user           User     @relation(fields: [userId], references: [id])
+  id              Int      @id @default(autoincrement())
+  code            String
+  team            String
+  customerGroup   String
+  customerName    String
+  price           String
+  dailyQuantities Json     @default("{}")
+  fishSize        String
+  fishType        String
+  createdAt       DateTime @default(now())
+  userId          Int
+  weekNumber      Int      
+  originalPrice   String?
+  priceHistory    Json?    @default("[]")
+  year            Int      
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  passwordHash  String
-  role          String   // "admin" or "user"
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  bookings      Booking[] // Relation to bookings
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  role         String
+  bookings     Booking[]
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  weekNumber Int
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

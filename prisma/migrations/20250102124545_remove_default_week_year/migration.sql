@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Booking" ALTER COLUMN "weekNumber" DROP DEFAULT,
+ALTER COLUMN "year" DROP DEFAULT;

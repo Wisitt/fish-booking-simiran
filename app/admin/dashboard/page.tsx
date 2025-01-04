@@ -229,7 +229,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-10">
+    <div className="min-h-screen py-10">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 bg-white bg-opacity-90 rounded-lg shadow-xl">
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-center mb-8">

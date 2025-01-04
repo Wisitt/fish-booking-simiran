@@ -1,3 +1,4 @@
+// app/api/export/excel/route.ts
 import { NextResponse } from "next/server";
 import { Prisma, PrismaClient } from "@prisma/client";
 import * as XLSX from "xlsx";
@@ -10,7 +11,7 @@ interface RawBooking {
   customerGroup: string;
   customerName: string;
   price: string;
-  dailyQuantities: Prisma.JsonValue; // Use Prisma.JsonValue
+  dailyQuantities: Prisma.JsonValue;
   fishSize: string;
   fishType: string;
   code: string;
@@ -50,6 +51,7 @@ export async function GET(req: Request) {
 
       const rawBookings: RawBooking[] = await prisma.booking.findMany({
         where: { weekNumber: selectedWeek },
+        orderBy: { code: 'asc' }
       });
 
       bookings = rawBookings.map((booking: RawBooking): Booking => ({
@@ -62,7 +64,9 @@ export async function GET(req: Request) {
             : null,
       }));
     } else {
-      const rawBookings: RawBooking[] = await prisma.booking.findMany();
+      const rawBookings: RawBooking[] = await prisma.booking.findMany({
+        orderBy: { code: 'asc' }
+      });
 
       bookings = rawBookings.map((booking: RawBooking): Booking => ({
         ...booking,
@@ -82,6 +86,13 @@ export async function GET(req: Request) {
         return bookingDate.toDateString() === searchDate.toDateString();
       });
     }
+
+    // Sort bookings by code numerically
+    bookings.sort((a, b) => {
+      const codeA = parseInt(a.code.replace(/\D/g, ''));
+      const codeB = parseInt(b.code.replace(/\D/g, ''));
+      return codeA - codeB;
+    });
 
     const allDays = Array.from(
       new Set(
@@ -111,8 +122,9 @@ export async function GET(req: Request) {
     });
 
     const ws = XLSX.utils.json_to_sheet(data, {
-      header: ["พนักงาน", "Team", "กลุ่มลูกค้า", "ชื่อลูกค้า", "ขนาดปลา", "ราคา", ...allDays, "รวมสัปดาห์"],
+      header: ["พนักงาน", "Team", "กลุ่มลูกค้า", "ชื่อลูกค้า", "ขนาดปลา", "ประเภทปลา", "ราคา", ...allDays, "รวมสัปดาห์"],
     });
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Booking Report");
 

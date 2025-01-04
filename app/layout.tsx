@@ -1,4 +1,4 @@
-// app/layout.tsx 
+// app/layout.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,26 +15,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // เพิ่ม event listener เมื่อมีการเปลี่ยนแปลงใน localStorage
   useEffect(() => {
     const checkLoginStatus = () => {
       const role = localStorage.getItem("role");
-      setIsLoggedIn(!!role);  // ถ้ามี role แสดงว่า user ได้เข้าสู่ระบบ
+      setIsLoggedIn(!!role);
     };
 
-    // เช็คสถานะการล็อกอินทันทีที่หน้าโหลด
     checkLoginStatus();
-
-    // ฟังการเปลี่ยนแปลงใน localStorage
     window.addEventListener("storage", checkLoginStatus);
 
-    // ทำความสะอาดหลังจากการ render
     return () => {
       window.removeEventListener("storage", checkLoginStatus);
     };
   }, [pathname]);
 
-  // ถ้า user ไม่ล็อกอิน หรืออยู่ในหน้า login, ให้แสดงเฉพาะ children
   if (!isLoggedIn || pathname === "/login") {
     return (
       <html lang="en">
@@ -46,17 +40,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-      <title>Simiran Food Systems</title>
+        <title>Simiran Food Systems</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Simiran Food Systems - The best food booking system" />
         <link rel="icon" href="/fish_logo.png" />
-        </head>
-      <body className="h-screen w-screen overflow-hidden bg-gradient-to-b from-sky-200 via-sky-400 to-sky-300  flex">
+      </head>
+      <body className="h-screen w-screen ">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
-        <div className={`flex-1 overflow-auto transition-all ${isSidebarOpen ? "ml-0" : "ml-0"}`}>
-          {children}
-        </div>
-      </body>
+      <div className={`flex-1 overflow-y-auto transition-all ${
+        isSidebarOpen ? "md:ml-60 ml-0" : "ml-0"
+      }`}>
+        {children}
+      </div>
+    </body>
     </html>
   );
 }
