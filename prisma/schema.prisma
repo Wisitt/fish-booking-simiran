@@ -37,11 +37,14 @@ model User {
 }
 
 model Announcement {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  weekNumber Int
-  year      Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  weekNumber  Int
+  year        Int
+  prices      Json     @default("[]") // เก็บข้อมูลราคาปลาในรูปแบบ JSON
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

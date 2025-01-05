@@ -1,96 +1,94 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// app/api/announcements/route.ts
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+function getWeekDates(weekNumber: number, year: number) {
+  const firstDayOfYear = new Date(year, 0, 1);
+  const firstMonday = new Date(year, 0, 1 + ((1 - firstDayOfYear.getDay() + 7) % 7));
+  
+  const startDate = new Date(firstMonday);
+  startDate.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
+  
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6); // 7 days including start date
+  
+  // Set time to start and end of day
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+  
+  return { startDate, endDate };
+}
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  switch (req.method) {
-    case "GET":
-      await handleGet(req, res);
-      break;
-    case "POST":
-      await handlePost(req, res);
-      break;
-    case "PUT":
-      await handlePut(req, res);
-      break;
-    case "DELETE":
-      await handleDelete(req, res);
-      break;
-    default:
-      res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+export async function POST(req: Request) {
+  try {
+    const { title, content, weekNumber, year, prices } = await req.json();
+    const { startDate, endDate } = getWeekDates(weekNumber, year);
+
+    const announcement = await prisma.announcement.create({
+      data: { 
+        title, 
+        content, 
+        weekNumber, 
+        year, 
+        prices,
+        startDate,
+        endDate
+      },
+    });
+
+    return new Response(JSON.stringify(announcement), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "Unable to create announcement." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
 
-async function handleGet(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: Request) {
   try {
     const announcements = await prisma.announcement.findMany({
       orderBy: { createdAt: "desc" },
     });
-    res.status(200).json(announcements);
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
-    res.status(500).json({ error: "Unable to fetch announcements." });
-  }
-}
-
-async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  const { title, content, weekNumber, year } = req.body;
-
-  if (!title || !content || !weekNumber || !year) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
-  try {
-    const announcement = await prisma.announcement.create({
-      data: {
-        title,
-        content,
-        weekNumber,
-        year,
-      },
+    return new Response(JSON.stringify(announcements), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
-    res.status(201).json(announcement);
   } catch (error) {
-    console.error("Error creating announcement:", error);
-    res.status(500).json({ error: "Unable to create announcement." });
+    return new Response(
+      JSON.stringify({ error: "Unable to fetch announcements." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
-
-async function handlePut(req: NextApiRequest, res: NextApiResponse) {
-  const { id, title, content } = req.body;
-
-  if (!id || !title || !content) {
-    return res.status(400).json({ error: "ID, title, and content are required." });
-  }
-
+export async function DELETE(req: Request) {
   try {
-    const announcement = await prisma.announcement.update({
-      where: { id },
-      data: { title, content },
-    });
-    res.status(200).json(announcement);
-  } catch (error) {
-    console.error("Error updating announcement:", error);
-    res.status(500).json({ error: "Unable to update announcement." });
-  }
-}
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
 
-async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.body;
+    if (!id) {
+      return new Response(
+        JSON.stringify({ error: "ID is required." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-  if (!id) {
-    return res.status(400).json({ error: "ID is required." });
-  }
-
-  try {
     await prisma.announcement.delete({
-      where: { id },
+      where: { id: parseInt(id) },
     });
-    res.status(200).json({ message: "Announcement deleted successfully." });
+
+    return new Response(
+      JSON.stringify({ message: "Announcement deleted successfully." }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("Error deleting announcement:", error);
-    res.status(500).json({ error: "Unable to delete announcement." });
+    return new Response(
+      JSON.stringify({ error: "Unable to delete announcement." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

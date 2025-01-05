@@ -1,3 +1,5 @@
+// app/api/admin/addUser/route.ts 
+
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs"; // Switch to bcryptjs for compatibility

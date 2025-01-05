@@ -48,12 +48,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       { icon: <Settings size={20} />, label: "Dashboard", href: "/admin/dashboard" },
       { icon: <Calendar size={20} />, label: "Booking System", href: "/admin/bookings" },
       { icon: <PlusCircle size={20} />, label: "User Management", href: "/admin/userManagement" },
+      { icon: <PlusCircle size={20} />, label: "Announcements", href: "/admin/announcements" },
+
       // { icon: <PlusCircle size={20} />, label: "Monitor", href: "/admin/monitor" },
       // { icon: <PlusCircle size={20} />, label: "3daysum", href: "/admin/3daySum" },
 
 
     ] : [
       { icon: <Calendar size={20} />, label: "Booking System", href: "/bookings" },
+      { icon: <Calendar size={20} />, label: "Booking System", href: "/announcements" },
+
     ]),
   ];
 
