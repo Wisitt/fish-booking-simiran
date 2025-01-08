@@ -23,14 +23,17 @@ const LoginPage = () => {
     const data = await response.json();
 
     if (response.ok) {
-      const { role, id: userId } = data;
+      const { role, id: userId,code } = data;
       localStorage.setItem("role", role);
       localStorage.setItem("email", email);
-      localStorage.setItem("userId", userId.toString());
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("code", code); // Add code to localStorage
+
       router.push("/");
     } else {
       alert(data.message || "Invalid credentials.");
     }
+    
   };
 
   return (

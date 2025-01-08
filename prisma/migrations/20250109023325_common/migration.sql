@@ -1,0 +1,28 @@
+-- CreateTable
+CREATE TABLE "Team" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Customer" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Customer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Team_name_key" ON "Team"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Customer_name_key" ON "Customer"("name");
+
+
+-- โหลดข้อมูลจาก CSV เข้าตาราง "customers"
+COPY "Customer"(id, name)
+FROM './app/data/customers.csv'
+DELIMITER ','
+CSV HEADER;

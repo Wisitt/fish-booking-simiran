@@ -24,23 +24,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "You are not authorized to edit this booking" }, { status: 403 });
     }
 
-    // ตรวจสอบ customerGroup
-    if (existingBooking.customerGroup !== "กลุ่ม 2 : ต่อราคา") {
-      return NextResponse.json({
-        error: "This booking is not in 'ต่อราคา' group, cannot edit last week's data."
-      }, { status: 403 });
-    }
-
-    // ตรวจสอบว่า booking นี้เป็น “อาทิตย์ที่แล้ว” (monday-based)
-    const { year: prevYear, weekNumber: prevWeek } = getPreviousMondayWeek(new Date());
-    const bookingYear = new Date(existingBooking.createdAt).getFullYear();
-    if (bookingYear !== prevYear || existingBooking.weekNumber !== prevWeek) {
-      return NextResponse.json({
-        error: "You can only edit last week's booking if it's 'ต่อราคา'."
-      }, { status: 403 });
-    }
-
-    // update
+    // อัปเดต Booking
     const updatedBooking = await prisma.booking.update({
       where: { id: Number(id) },
       data: updateData,
@@ -52,3 +36,4 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+

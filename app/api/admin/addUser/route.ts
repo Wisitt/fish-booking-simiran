@@ -9,17 +9,15 @@ const ALLOWED_ROLES = ["admin", "user"];
 
 export async function POST(req: Request) {
   try {
-    console.log("Starting POST /api/admin/addUser...");
     const body = await req.json();
-    console.log("Request body parsed:", body);
 
-    const { email, password, role } = body;
+    const { email, password, role, code } = body;
 
     // Validate required fields
-    if (!email || !password || !role) {
+    if (!email || !password || !role || !code) {
       console.error("Validation error: Missing required fields.");
       return NextResponse.json(
-        { message: "Email, password, and role are required." },
+        { message: "Email, password, role, and code are required." },
         { status: 400 }
       );
     }
@@ -33,8 +31,17 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check if the code already exists
+    const existingCode = await prisma.user.findUnique({ where: { code } });
+    if (existingCode) {
+      console.error("Validation error: Code already exists.");
+      return NextResponse.json(
+        { message: "Code already exists." },
+        { status: 409 }
+      );
+    }
+
     // Check if the email already exists
-    console.log("Checking if user exists...");
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       console.error("Validation error: User already exists.");
@@ -45,24 +52,21 @@ export async function POST(req: Request) {
     }
 
     // Hash the password
-    console.log("Hashing password...");
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create a new user in the database
-    console.log("Creating new user...");
     const newUser = await prisma.user.create({
       data: {
         email,
         passwordHash,
         role,
+        code, // บันทึก code ที่ผู้ใช้ป้อนลงฐานข้อมูล
       },
     });
 
-    console.log("User created successfully:", newUser);
-
     return NextResponse.json({
       message: "User added successfully!",
-      user: { id: newUser.id, email: newUser.email, role: newUser.role },
+      user: { id: newUser.id, email: newUser.email, role: newUser.role, code: newUser.code },
     });
   } catch (error: unknown) {
     console.error("Unexpected error:", error);

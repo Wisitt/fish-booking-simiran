@@ -28,8 +28,6 @@ export async function GET(req: Request) {
       whereCondition.year = Number(yearParam);
       whereCondition.weekNumber = Number(weekParam);
     }
-    console.log("Fetching Bookings with Condition:", whereCondition);
-
     const bookings = await prisma.booking.findMany({
       where: whereCondition,
       orderBy: { createdAt: "desc" },

@@ -6,6 +6,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model Team {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model Customer {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
 
 model Booking {
   id              Int      @id @default(autoincrement())
@@ -30,11 +39,13 @@ model User {
   id           Int       @id @default(autoincrement())
   email        String    @unique
   passwordHash String
+  code         String    @unique // Add this field
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   role         String
   bookings     Booking[]
 }
+
 
 model Announcement {
   id          Int      @id @default(autoincrement())

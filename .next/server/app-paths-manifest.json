@@ -1,10 +1,10 @@
 {
-  "/(user)/announcements/page": "app/(user)/announcements/page.js",
-  "/login/page": "app/login/page.js",
-  "/api/announcements/current/route": "app/api/announcements/current/route.js",
-  "/api/announcements/history/route": "app/api/announcements/history/route.js",
+  "/(user)/bookings/page": "app/(user)/bookings/page.js",
+  "/api/bookings/getUserCode/route": "app/api/bookings/getUserCode/route.js",
+  "/api/bookings/route": "app/api/bookings/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/common/teams/route": "app/api/common/teams/route.js",
+  "/api/common/customers/route": "app/api/common/customers/route.js",
   "/page": "app/page.js",
-  "/api/login/route": "app/api/login/route.js",
-  "/admin/announcements/page": "app/admin/announcements/page.js",
-  "/api/announcements/route": "app/api/announcements/route.js"
+  "/login/page": "app/login/page.js"
 }

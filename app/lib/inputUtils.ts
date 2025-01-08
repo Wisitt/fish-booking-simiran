@@ -1,11 +1,17 @@
 // app/lib/inputUtils.ts
-
 export function handleNumericInputChange(
-    callback: (value: string) => void
-  ): React.ChangeEventHandler<HTMLInputElement> {
-    return (e) => {
-      const sanitizedValue = e.target.value.replace(/[^0-9]/g, ""); // Allow only numbers
-      callback(sanitizedValue);
-    };
-  }
+  e: React.ChangeEvent<HTMLInputElement>,
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+) {
+  const { name, value } = e.target;
+  const sanitizedValue = value.replace(/[^0-9]/g, "");
+  const day = name.replace("day-", "");
   
+  setFormData((prev: any) => ({
+    ...prev,
+    dailyQuantities: {
+      ...prev.dailyQuantities,
+      [day]: sanitizedValue ? Number(sanitizedValue) : 0
+    }
+  }));
+}

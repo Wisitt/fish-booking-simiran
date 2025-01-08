@@ -21,6 +21,7 @@ const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("user");
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -85,7 +86,7 @@ const UsersPage = () => {
       const response = await fetch("/api/admin/addUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role }),
+        body: JSON.stringify({ email, password, role ,code}),
       });
 
       if (!response.ok) throw new Error("Failed to add user");
@@ -93,6 +94,7 @@ const UsersPage = () => {
       setSuccessMessage("User added successfully!");
       setEmail("");
       setPassword("");
+      setCode("");
       setRole("user");
       fetchUsers();
     } catch (error) {
@@ -188,11 +190,12 @@ const UsersPage = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Email</label>
                     <input
-                      type="email"
+                      type="text"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
+                      placeholder="Enter email or Username"
                     />
                   </div>
                   <div className="space-y-2">
@@ -204,6 +207,7 @@ const UsersPage = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         required
+                        placeholder="Password"
                       />
                       <button
                         type="button"
@@ -213,6 +217,17 @@ const UsersPage = () => {
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Code</label>
+                    <input
+                      type="text"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                      placeholder="Enter unique code"
+                    />
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

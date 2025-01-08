@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Home, Settings, LogOut, Users, Calendar,
-  PlusCircle, Trash2, KeyRound, Menu, X 
+  PlusCircle, Trash2, KeyRound, Menu, X, 
+  ChartCandlestick
 } from "lucide-react";
 
 interface SidebarProps {
@@ -34,9 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    localStorage.removeItem("userId");
+    localStorage.clear();
     router.push("/login");
   };
 
@@ -56,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
 
     ] : [
       { icon: <Calendar size={20} />, label: "Booking System", href: "/bookings" },
-      { icon: <Calendar size={20} />, label: "Booking System", href: "/announcements" },
+      { icon: <ChartCandlestick size={20} />, label: "Price", href: "/announcements" },
 
     ]),
   ];
@@ -83,10 +82,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       {/* Toggle Button - แยกออกมาอยู่นอก AnimatePresence */}
       <button
           onClick={toggleSidebar}
-          className={`fixed top-2 z-[60] p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-all duration-10
-            ${isMobile 
+          className={`fixed top-2 z-50 p-2  hover:bg-gray-100 transition-all duration-10
+            ${isMobile  
               ? 'right-4' // บนมือถือให้อยู่มุมขวา
-              : `left-4 ${isOpen ? 'md:translate-x-44 lg:translate-x-44' : 'translate-x-0'}`
+              : `left-4 ${isOpen ? 'md:translate-x-44 lg:translate-x-44' : 'translate-x-0 bg-white rounded-full shadow-lg'}`
             }
           `}
         >
@@ -98,6 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         {/* Overlay for mobile */}
         {isMobile && isOpen && (
           <motion.div
+            key={`overlay-${isOpen}`} 
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
@@ -108,6 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
 
         {/* Sidebar */}
         <motion.div
+          key={`sidebar-${isOpen}`}
           initial={isMobile ? { y: "-100%" } : { x: "-100%" }}
           animate={
             isMobile 
@@ -118,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           variants={sidebarVariants}
           className={`fixed ${
             isMobile ? 'top-0 left-0 right-0' : 'left-0 top-0 bottom-0 w-60'
-          } bg-white shadow-2xl z-50`}
+          } bg-white shadow-2xl z-40`}
         >
           <div className="flex flex-col h-full">
             {/* Header */}
@@ -138,9 +139,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               {/* Menu Items */}
               <nav className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-2">
-                  {menuItems.map((item) => (
+                  {menuItems.map((item, index) => (
                   <Link
-                  key={item.href}
+                  key={`${item.href}-${index}`} // เพิ่ม index เพื่อให้ key ไม่ซ้ำ
                   href={item.href}
                   onClick={() => {
                     if (isMobile) {

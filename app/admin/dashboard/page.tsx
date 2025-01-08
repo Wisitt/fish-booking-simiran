@@ -135,7 +135,6 @@ const AdminDashboard = () => {
       }
 
       const data: AnalysisResult = await response.json();
-      console.log("API Response:", data);
 
       const rawData = data.weeklyDataWithProfit || [];
 

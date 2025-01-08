@@ -1,12 +1,17 @@
 {
   "pages": {
-    "/(user)/announcements/page": [
-      "static/chunks/node_modules_0bd484._.js",
+    "/(user)/bookings/page": [
+      "static/chunks/node_modules_c2b368._.js",
       "static/chunks/app_bdff28._.js",
       "static/chunks/app_globals_73c377.css",
       "static/chunks/app_layout_tsx_36ac26._.js",
-      "static/chunks/app_(user)_announcements_page_tsx_063a72._.js",
-      "static/chunks/app_(user)_announcements_page_tsx_803856._.js",
+      "static/chunks/_af7d11._.js",
+      "static/chunks/node_modules_react-select_9453f5._.js",
+      "static/chunks/node_modules_react-icons_fa_index_mjs_d2e2d7._.js",
+      "static/chunks/node_modules_react-icons_lib_74ccc9._.js",
+      "static/chunks/node_modules_fb4374._.js",
+      "static/chunks/node_modules_react-toastify_dist_ReactToastify_391de2.css",
+      "static/chunks/app_(user)_bookings_page_tsx_361bf0._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc._.js",
       "static/chunks/node_modules_next_dist_compiled_107ce8._.js",
       "static/chunks/node_modules_next_dist_client_9bb038._.js",
@@ -16,16 +21,11 @@
       "static/chunks/_c4c472._.js",
       "static/chunks/_cb9de2._.js"
     ],
-    "/login/page": [
-      "static/chunks/node_modules_0bd484._.js",
+    "/_not-found/page": [
+      "static/chunks/node_modules_c2b368._.js",
       "static/chunks/app_bdff28._.js",
       "static/chunks/app_globals_73c377.css",
       "static/chunks/app_layout_tsx_36ac26._.js",
-      "static/chunks/node_modules_react-icons_fa_index_mjs_d2e2d7._.js",
-      "static/chunks/node_modules_react-icons_lib_74ccc9._.js",
-      "static/chunks/node_modules_6a2626._.js",
-      "static/chunks/app_login_page_tsx_0f3133._.js",
-      "static/chunks/app_login_page_tsx_803856._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc._.js",
       "static/chunks/node_modules_next_dist_compiled_107ce8._.js",
       "static/chunks/node_modules_next_dist_client_9bb038._.js",
@@ -36,13 +36,13 @@
       "static/chunks/_cb9de2._.js"
     ],
     "/page": [
-      "static/chunks/node_modules_0bd484._.js",
+      "static/chunks/node_modules_c2b368._.js",
       "static/chunks/app_bdff28._.js",
       "static/chunks/app_globals_73c377.css",
       "static/chunks/app_layout_tsx_36ac26._.js",
       "static/chunks/app_styles_bubble_module_0a3a26.css",
       "static/chunks/app_dd7737._.js",
-      "static/chunks/app_page_tsx_803856._.js",
+      "static/chunks/app_page_tsx_361bf0._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc._.js",
       "static/chunks/node_modules_next_dist_compiled_107ce8._.js",
       "static/chunks/node_modules_next_dist_client_9bb038._.js",
@@ -52,13 +52,16 @@
       "static/chunks/_c4c472._.js",
       "static/chunks/_cb9de2._.js"
     ],
-    "/admin/announcements/page": [
-      "static/chunks/node_modules_0bd484._.js",
+    "/login/page": [
+      "static/chunks/node_modules_c2b368._.js",
       "static/chunks/app_bdff28._.js",
       "static/chunks/app_globals_73c377.css",
       "static/chunks/app_layout_tsx_36ac26._.js",
-      "static/chunks/_e71af9._.js",
-      "static/chunks/app_admin_announcements_page_tsx_803856._.js",
+      "static/chunks/node_modules_react-icons_fa_index_mjs_d2e2d7._.js",
+      "static/chunks/node_modules_react-icons_lib_74ccc9._.js",
+      "static/chunks/node_modules_6a2626._.js",
+      "static/chunks/app_login_page_tsx_0f3133._.js",
+      "static/chunks/app_login_page_tsx_361bf0._.js",
       "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc._.js",
       "static/chunks/node_modules_next_dist_compiled_107ce8._.js",
       "static/chunks/node_modules_next_dist_client_9bb038._.js",
