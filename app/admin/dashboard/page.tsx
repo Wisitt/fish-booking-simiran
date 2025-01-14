@@ -94,74 +94,76 @@ const AdminDashboard = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const storedRole = localStorage.getItem("role");
-    if (storedRole !== "admin") {
-      router.push("/login");
-    } else {
-      setRole(storedRole);
+// Move fetchData to be defined before useEffect
+const fetchData = useCallback(async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    console.error("User ID not found");
+    return;
+  }
 
-      const savedCosts = localStorage.getItem("costsPerWeek");
-      if (savedCosts) {
-        setCostsPerWeek(JSON.parse(savedCosts));
-      }
+  setLoading(true);
 
-      fetchData();
+  try {
+    const response = await fetch("/api/bookings/analysis", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        role: "admin",
+        costsPerWeek,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
     }
-  }, [router]);
 
-  const fetchData = useCallback(async () => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      console.error("User ID not found");
-      return;
+    const data: AnalysisResult = await response.json();
+
+    const rawData = data.weeklyDataWithProfit || [];
+
+    // Process data for year, month
+    const processedData: WeeklyProfitData[] = rawData.map((item) => {
+      const d = new Date(item.weekStart);
+      const year = d.getFullYear();
+      const month = d.getMonth() + 1;
+      return { ...item, year, month };
+    });
+
+    setProfitAnalysisData(processedData);
+
+    setAnalysisData({
+      ...data,
+      weeklyBreakdown: data.weeklyBreakdown || [],
+      fishRanking: data.fishRanking || [],
+      customerDistribution: data.customerDistribution || [],
+      monthlyBreakdown: data.monthlyBreakdown || [],
+    });
+  } catch (error) {
+    console.error(error);
+    setAnalysisData(null);
+  } finally {
+    setLoading(false);
+  }
+}, [costsPerWeek]);
+
+useEffect(() => {
+  const storedRole = localStorage.getItem("role");
+  if (storedRole !== "admin") {
+    router.push("/login");
+  } else {
+    setRole(storedRole);
+
+    const savedCosts = localStorage.getItem("costsPerWeek");
+    if (savedCosts) {
+      setCostsPerWeek(JSON.parse(savedCosts));
     }
 
-    setLoading(true);
+    fetchData();
+  }
+}, [router, fetchData]);
 
-    try {
-      const response = await fetch("/api/bookings/analysis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          role: "admin",
-          costsPerWeek,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const data: AnalysisResult = await response.json();
-
-      const rawData = data.weeklyDataWithProfit || [];
-
-      // Process data for year, month
-      const processedData: WeeklyProfitData[] = rawData.map((item) => {
-        const d = new Date(item.weekStart);
-        const year = d.getFullYear();
-        const month = d.getMonth() + 1;
-        return { ...item, year, month };
-      });
-
-      setProfitAnalysisData(processedData);
-
-      setAnalysisData({
-        ...data,
-        weeklyBreakdown: data.weeklyBreakdown || [],
-        fishRanking: data.fishRanking || [],
-        customerDistribution: data.customerDistribution || [],
-        monthlyBreakdown: data.monthlyBreakdown || [],
-      });
-    } catch (error) {
-      console.error(error);
-      setAnalysisData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [costsPerWeek]);
   if (!role) return null;
   if (loading) return <div className="flex justify-center items-center h-screen"><div className="text-center font-semibold text-gray-700">Loading...</div></div>;
   if (!analysisData) return <div className="flex justify-center items-center h-screen text-red-600 font-bold">Failed to load data. Please try again later.</div>;
