@@ -1,8 +1,10 @@
 "use client";
 
 import { formatDate } from "@/app/lib/formatdate";
+import { handleNumericAnnouncementPriceChange } from "@/app/lib/inputUtils";
 import { Calendar, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 interface SelectOption {
   value: string;
@@ -55,7 +57,7 @@ const AdminAnnouncements = () => {
 
   const handleCreateAnnouncement = async () => {
     if (!newAnnouncement.startDate || !newAnnouncement.endDate) {
-      alert("Please select both start and end dates.");
+      toast.error("Please select both start and end dates.");
       return;
     }
   
@@ -85,10 +87,10 @@ const AdminAnnouncements = () => {
         });
       } else {
         const errorData = await response.json();
-        alert(`Failed to create announcement: ${errorData.error}`);
+        toast.error(`Failed to create announcement: ${errorData.error}`);
       }
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
   
@@ -103,7 +105,7 @@ const AdminAnnouncements = () => {
       });
 
       if (response.ok) {
-        alert("Announcement deleted successfully!");
+        toast.success("Announcement deleted successfully!");
         fetchAnnouncements();
       } else {
       }
@@ -225,14 +227,17 @@ const AdminAnnouncements = () => {
                     ))}
                   </select>
                   <input
-                    type="number"
+                    type="text"
                     placeholder="Price"
                     value={price.price}
-                    onChange={(e) => {
-                      const updatedPrices = [...newAnnouncement.prices];
-                      updatedPrices[index].price = Number(e.target.value);
-                      setNewAnnouncement({ ...newAnnouncement, prices: updatedPrices });
-                    }}
+                    onChange={(e) =>
+                      handleNumericAnnouncementPriceChange(
+                        e,
+                        setNewAnnouncement,
+                        index,
+                        newAnnouncement
+                      )
+                    }
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   />
                   <button

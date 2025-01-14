@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "./components/Sidebar";
 import "./globals.css";
+import ToastProvider from "./components/providers/ToastProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,12 +47,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/fish_logo.png" />
       </head>
       <body className="h-screen w-screen ">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
-      <div className={`flex-1 overflow-y-auto transition-all ${
-        isSidebarOpen ? "md:ml-60 ml-0" : "ml-0"
-      }`}>
-        {children}
-      </div>
+      <ToastProvider>
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={handleSidebarToggle} />
+        <div className={`flex-1 overflow-y-auto transition-all ${
+          isSidebarOpen ? "md:ml-60 ml-0" : "ml-0"
+        }`}>
+          {children}
+        </div>
+      </ToastProvider>
     </body>
     </html>
   );

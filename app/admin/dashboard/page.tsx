@@ -157,7 +157,6 @@ const AdminDashboard = () => {
       });
 
     } catch (error) {
-      console.error("Error fetching data:", error);
       setAnalysisData(null);
     } finally {
       setLoading(false);
@@ -228,8 +227,8 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen py-10">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 bg-white bg-opacity-90 rounded-lg shadow-xl">
+    <div className="min-h-screen py-10 bg-gray-50">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-4xl font-extrabold text-gray-800 mb-4 md:mb-0">Admin Dashboard</h1>

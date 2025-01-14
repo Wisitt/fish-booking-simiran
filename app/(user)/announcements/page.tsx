@@ -207,14 +207,14 @@ const UserAnnouncements = () => {
 
               <ModalBody>
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-4 border-black border">
                     <p className="text-sm text-gray-500 mb-1">Valid Period</p>
                     <p className="text-gray-900 font-medium">
                       {formatDate(selectedAnnouncement.startDate)} - {formatDate(selectedAnnouncement.endDate)}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-4 border-black border">
                     <p className="text-gray-700 whitespace-pre-wrap">{selectedAnnouncement.content}</p>
                   </div>
 
@@ -222,7 +222,7 @@ const UserAnnouncements = () => {
                     {selectedAnnouncement.prices.map((price, index) => (
                       <div 
                         key={index} 
-                        className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                        className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow border-black"
                       >
                         <div className="flex justify-between items-center">
                           <div>

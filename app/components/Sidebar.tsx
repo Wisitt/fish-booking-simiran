@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from 'next/image';
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Home, Settings, LogOut, Users, Calendar,
-  PlusCircle, Trash2, KeyRound, Menu, X, 
+  Home, Settings, LogOut, Calendar,
+  PlusCircle, Menu, X, 
   ChartCandlestick
 } from "lucide-react";
 
@@ -127,10 +127,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               <div className="flex items-center space-x-3">
                 <Image
                   src="/fish_logo.png"
-                  alt="Logo"
+                  alt="Fish Logo"
                   width={40}
                   height={40}
-                  className="rounded-full"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
                 <span className="font-bold text-lg">SIMIRAN</span>
               </div>

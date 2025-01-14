@@ -7,13 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model Team {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  users     User[]    // Users ที่อยู่ในทีมนี้
+  customers  Customer[] // Customers ที่สัมพันธ์กับทีม
 }
 
 model Customer {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id      Int       @id @default(autoincrement())
+  name    String    @db.Text // Allows longer text and any characters
+  userId  Int       // เชื่อมโยงกับ User
+  user    User      @relation(fields: [userId], references: [id])
+  teamId  Int?      // เชื่อมโยงกับ Team (ถ้าจำเป็น)
+  team    Team?     @relation(fields: [teamId], references: [id])
 }
 
 model Booking {
@@ -39,13 +45,15 @@ model User {
   id           Int       @id @default(autoincrement())
   email        String    @unique
   passwordHash String
-  code         String    @unique // Add this field
+  code         String    @unique // To map to `พนักงาน`
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   role         String
   bookings     Booking[]
+  teamId       Int?      // Optional, as not all users might belong to a team
+  team         Team?     @relation(fields: [teamId], references: [id])
+  customers    Customer[] // One user can manage multiple customers
 }
-
 
 model Announcement {
   id          Int      @id @default(autoincrement())

@@ -19,10 +19,3 @@ CREATE UNIQUE INDEX "Team_name_key" ON "Team"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Customer_name_key" ON "Customer"("name");
-
-
--- โหลดข้อมูลจาก CSV เข้าตาราง "customers"
-COPY "Customer"(id, name)
-FROM './app/data/customers.csv'
-DELIMITER ','
-CSV HEADER;

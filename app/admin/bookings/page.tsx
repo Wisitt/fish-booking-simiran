@@ -1,7 +1,7 @@
 // app/admin/bookings/page.tsx 
 "use client";
 
-import SummaryTable from "@/app/components/admin/SummaryTable";
+import SummaryTable from "@/app/admin/bookings/components/SummaryTable";
 
 
 const AdminBookingsPage = () => {

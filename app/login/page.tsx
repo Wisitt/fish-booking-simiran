@@ -23,11 +23,13 @@ const LoginPage = () => {
     const data = await response.json();
 
     if (response.ok) {
-      const { role, id: userId,code } = data;
+      const { role, id: userId, code, team, customers } = data;
       localStorage.setItem("role", role);
       localStorage.setItem("email", email);
       localStorage.setItem("userId", userId);
       localStorage.setItem("code", code); // Add code to localStorage
+      localStorage.setItem("team", JSON.stringify(team)); // เก็บทีม
+      localStorage.setItem("customers", JSON.stringify(customers)); // เก็บลูกค้า
 
       router.push("/");
     } else {

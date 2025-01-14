@@ -24,7 +24,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black/90 backdrop-blur-md z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -46,7 +46,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 
 export function ModalHeader({ children }: ModalHeaderProps) {
   return (
-    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between z-10 rounded-t-2xl bg-sky-100	">
+    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between z-10 rounded-t-2xl bg-gradient-to-br from-sky-50 via-white to-sky-100 border-black	 border-b  	">
       {children}
     </div>
   );
@@ -62,7 +62,7 @@ export function ModalBody({ children }: ModalBodyProps) {
 
 export function ModalFooter({ children }: ModalFooterProps) {
   return (
-    <div className="px-6 py-4 border-t border-gray-200 bg-gray-200 rounded-b-2xl">
+    <div className="px-6 py-4 border-t border-gray-200 bg-gray-200 rounded-b-2xl border-black border-t">
       {children}
     </div>
   );

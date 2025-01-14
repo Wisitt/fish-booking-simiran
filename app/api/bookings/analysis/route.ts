@@ -99,7 +99,7 @@ export async function POST(req: Request) {
 
     // Weekly Profit/Loss คำนวณโดยใช้ costsPerWeek
     // ถ้าไม่มี costsPerWeek หรือไม่มีต้นทุนระบุสำหรับสัปดาห์นั้น ให้ใช้ cost ดีฟอลต์ เช่น 295
-    const defaultCost = 295;
+    const defaultCost = 300;
     const weeklyDataWithProfit = processWeeklyBookingsWithProfit(bookings, costsPerWeek || {}, defaultCost);
 
     // สรุป profit รายเดือนและรายปี

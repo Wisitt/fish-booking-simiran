@@ -2,7 +2,7 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-interface DialogProps {
+interface SharedDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
@@ -12,9 +12,10 @@ interface DialogProps {
   onConfirm: () => void;
   onCancel?: () => void;
   isDestructive?: boolean;
+  isEdit?: boolean;
 }
 
-export const SharedDialog: React.FC<DialogProps> = ({
+export const SharedDialog: React.FC<SharedDialogProps> = ({
   open,
   onOpenChange,
   title,
@@ -24,6 +25,7 @@ export const SharedDialog: React.FC<DialogProps> = ({
   onConfirm,
   onCancel,
   isDestructive = false,
+  isEdit =  false,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -36,7 +38,7 @@ export const SharedDialog: React.FC<DialogProps> = ({
           <Button variant="outline" onClick={() => (onCancel ? onCancel() : onOpenChange(false))}>
             {cancelText}
           </Button>
-          <Button variant={isDestructive ? "destructive" : "default"} onClick={onConfirm}>
+          <Button variant={isDestructive ? "destructive" : isEdit ? "edit" : "default"} onClick={onConfirm}>
             {confirmText}
           </Button>
         </div>
