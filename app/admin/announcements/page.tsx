@@ -52,6 +52,7 @@ const AdminAnnouncements = () => {
       const data = await response.json();
       setAnnouncements(data);
     } catch (error) {
+      console.error(error);
     }
   };
 
@@ -90,6 +91,7 @@ const AdminAnnouncements = () => {
         toast.error(`Failed to create announcement: ${errorData.error}`);
       }
     } catch (error) {
+      console.error(error);
       toast.error("An unexpected error occurred. Please try again.");
     }
   };
@@ -110,6 +112,7 @@ const AdminAnnouncements = () => {
       } else {
       }
     } catch (error) {
+      console.error(error);
     }
   };
 

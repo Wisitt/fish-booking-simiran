@@ -58,34 +58,34 @@ export function calcMondayWeek(date: Date, year: number, firstMonday: Date): { y
  * getWeekStartAndEndDates:
  *   Calculate the start and end dates of a week.
  */
-const getWeekStartAndEndDates = (weekNumber: number, year: number) => {
-  const firstMonday = getFirstMondayOfYear(year);
-  const startDate = new Date(firstMonday);
-  startDate.setDate(startDate.getDate() + (weekNumber - 1) * 7);
+// const getWeekStartAndEndDates = (weekNumber: number, year: number) => {
+//   const firstMonday = getFirstMondayOfYear(year);
+//   const startDate = new Date(firstMonday);
+//   startDate.setDate(startDate.getDate() + (weekNumber - 1) * 7);
 
-  // Handle transitions into the next year
-  const nextYearFirstMonday = getFirstMondayOfYear(year + 1);
-  if (startDate >= nextYearFirstMonday) {
-    return getWeekStartAndEndDates(1, year + 1);
-  }
+//   // Handle transitions into the next year
+//   const nextYearFirstMonday = getFirstMondayOfYear(year + 1);
+//   if (startDate >= nextYearFirstMonday) {
+//     return getWeekStartAndEndDates(1, year + 1);
+//   }
 
-  // Calculate the end date
-  const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + 6);
+//   // Calculate the end date
+//   const endDate = new Date(startDate);
+//   endDate.setDate(startDate.getDate() + 6);
 
-  // Format dates
-  const formatDate = (date: Date) => {
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    return `${day}/${month}/${year}`;
-  };
+//   // Format dates
+//   const formatDate = (date: Date) => {
+//     const day = String(date.getUTCDate()).padStart(2, "0");
+//     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+//     const year = date.getUTCFullYear();
+//     return `${day}/${month}/${year}`;
+//   };
 
-  return {
-    start: formatDate(startDate),
-    end: formatDate(endDate),
-  };
-};
+//   return {
+//     start: formatDate(startDate),
+//     end: formatDate(endDate),
+//   };
+// };
 
 
 // Additional helper functions (unchanged but retained for legacy code)
@@ -94,7 +94,6 @@ export function getPreviousMondayWeek(date: Date = new Date()): { year: number; 
   if (weekNumber > 1) {
     return { year, weekNumber: weekNumber - 1 };
   } else {
-    const prevYear = year - 1;
     const d = getFirstMondayOfYear(year);
     d.setDate(d.getDate() - 1);
     return getMondayWeekAndYear(d);

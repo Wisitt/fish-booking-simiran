@@ -1,39 +1,41 @@
-// app/lib/inputUtils.ts
-export function handleNumericInputChange(
+type SetFormData<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export function handleNumericInputChange<T extends { dailyQuantities: Record<string, number> }>(
   e: React.ChangeEvent<HTMLInputElement>,
-  setFormData: React.Dispatch<React.SetStateAction<any>>
+  setFormData: SetFormData<T>
 ) {
   const { name, value } = e.target;
   const sanitizedValue = value.replace(/[^0-9]/g, "");
   const day = name.replace("day-", "");
-  
-  setFormData((prev: any) => ({
+
+  setFormData((prev) => ({
     ...prev,
     dailyQuantities: {
       ...prev.dailyQuantities,
-      [day]: sanitizedValue ? Number(sanitizedValue) : 0
-    }
+      [day]: sanitizedValue ? Number(sanitizedValue) : 0,
+    },
   }));
 }
 
-export function handleNumericAnnouncementPriceChange(
-  e: React.ChangeEvent<HTMLInputElement>,
-  setNewAnnouncement: React.Dispatch<React.SetStateAction<any>>,
-  index: number,
-  newAnnouncement: any
-) {
-  // 1) กรองอักขระที่ไม่ใช่ตัวเลข
-  const sanitizedValue = e.target.value.replace(/[^0-9]/g, "");
-  // 2) แปลงเป็น Number (ถ้า "" ให้เป็น 0)
-  const numericValue = sanitizedValue ? Number(sanitizedValue) : 0;
 
-  // 3) อัปเดตฟิลด์ราคาภายใน prices
-  const updatedPrices = [...newAnnouncement.prices];
-  updatedPrices[index].price = numericValue;
-
-  // 4) setState กลับ
-  setNewAnnouncement({
-    ...newAnnouncement,
-    prices: updatedPrices,
-  });
-}
+export function handleNumericAnnouncementPriceChange<T extends { prices: { price: number }[] }>(
+    e: React.ChangeEvent<HTMLInputElement>,
+    setNewAnnouncement: SetFormData<T>,
+    index: number,
+    newAnnouncement: T
+  ) {
+    // 1) Filter out non-numeric characters
+    const sanitizedValue = e.target.value.replace(/[^0-9]/g, "");
+    // 2) Convert to a number (or 0 if empty)
+    const numericValue = sanitizedValue ? Number(sanitizedValue) : 0;
+  
+    // 3) Update the prices array
+    const updatedPrices = [...newAnnouncement.prices];
+    updatedPrices[index].price = numericValue;
+  
+    // 4) Update the state
+    setNewAnnouncement({
+      ...newAnnouncement,
+      prices: updatedPrices,
+    });
+  }

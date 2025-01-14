@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     const weekParam = searchParams.get("weekNumber");
     const yearParam = searchParams.get("year");
 
-    let whereCondition: any = {};
+    const whereCondition: { userId?: number; year?: number; weekNumber?: number } = {};
 
     if (userIdHeader) {
       const parsedId = parseInt(userIdHeader, 10);

@@ -4,7 +4,6 @@
 import { useState, useEffect, useRef } from "react";
 import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Pagination from "@/components/Pagination";
@@ -55,6 +54,7 @@ export default function BookingPage() {
       const data = await res.json();
       setBookingsCurrent(data);
     } catch (error) {
+      console.error(error); 
       toast.error("Error fetching current week bookings.");
     }
   }
@@ -70,6 +70,7 @@ export default function BookingPage() {
       const data = await res.json();
       setBookingsPrevious(data);
     } catch (error) {
+      console.error(error); 
       toast.error("Error fetching previous week bookings.");
     }
   }
@@ -122,6 +123,7 @@ export default function BookingPage() {
       setBookingsCurrent((prev) => prev.filter((b) => b.id !== deleteId));
       toast.success("Booking deleted successfully!");
     } catch (error) {
+      console.error(error); 
       toast.error("Failed to delete booking.");
     } finally {
       setDeleteId(null);
@@ -187,6 +189,7 @@ export default function BookingPage() {
       toast.success("All bookings copied to current week!");
       setActiveTab("current");
     } catch (error) {
+      console.error(error); 
       toast.error("Failed to copy all bookings.");
     }
   }
@@ -229,15 +232,10 @@ export default function BookingPage() {
       toast.success(`Copied booking "${booking.code}" to MondayWeek (${year}, #${weekNumber})`);
       setActiveTab("current");
     } catch (error) {
+      console.error(error); 
       toast.error("Error copying booking to current week.");
     }
   }
-
-  // filter
-  const filteredCurrent = bookingsCurrent.filter((b) =>
-    b.code.toLowerCase().includes(searchCode.toLowerCase())
-  );
-  const filteredPrevious = bookingsPrevious;
 
   const TableHeader = ({ isPrevious = false }) => (
     <tr className={`${isPrevious ? 'bg-pink-100' : 'bg-gray-100'} text-center`}>
@@ -255,7 +253,7 @@ export default function BookingPage() {
     </tr>
   );
 
-  const TableRow = ({ booking, isPrevious, onCopy, onEdit, onDelete }: { booking: Booking; isPrevious: boolean; onCopy: (booking: Booking) => void; onEdit: (booking: Booking) => void; onDelete: (id: number) => void }) => (
+  const TableRow = ({ booking, isPrevious, onCopy, onDelete }: { booking: Booking; isPrevious: boolean; onCopy: (booking: Booking) => void; onEdit: (booking: Booking) => void; onDelete: (id: number) => void }) => (
     <tr className={`hover:${isPrevious ? 'bg-pink-50' : 'bg-gray-50'} text-center`}>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.code}</td>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.team}</td>
@@ -402,7 +400,7 @@ export default function BookingPage() {
               <BookingForm
                 setBookings={setBookingsCurrent}
                 editingBooking={editingBooking}
-                clearEditingBooking={() => setEditingBooking(null)}
+                clearEditingBooking={() => clearEditingBooking}
                 firstInputRef={firstInputRef}
               />
             </div>
@@ -489,7 +487,7 @@ export default function BookingPage() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         title="Confirm Deletion"
-        description="Are you sure you want to delete this booking? This action cannot be undone."
+        description="Are you sure you want to delete this booking? It can&apos;t be undone."
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={handleDelete}

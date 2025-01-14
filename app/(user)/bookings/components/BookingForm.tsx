@@ -50,7 +50,6 @@ interface Booking {
   year: number;
 }
 
-interface FormData extends Omit<Booking, "id"> {}
 
 interface Props {
   setBookings: React.Dispatch<React.SetStateAction<Booking[]>>;
@@ -72,7 +71,7 @@ export default function BookingForm({
 
   const [teams, setTeams] = useState<SelectOption[]>([]);
   const [customerNames, setCustomerNames] = useState<SelectOption[]>([]);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<Omit<Booking, "id">>({
     code: "",
     team: "",
     customerGroup: "",
@@ -123,7 +122,7 @@ export default function BookingForm({
         // Set filtered Customers and Team
         setTeams([{ value: data.team, label: data.team }]);
         setCustomerNames(
-          data.customers.map((customer: any) => ({
+          data.customers.map((customer: { name: string }) => ({
             value: customer.name,
             label: customer.name,
           }))
@@ -262,6 +261,7 @@ export default function BookingForm({
       }
       clearEditingBooking?.();
     } catch (error) {
+      console.error(error);
       toast.error("Error submitting booking.");
     }
   };

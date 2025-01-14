@@ -28,6 +28,7 @@ export async function GET(req: Request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error(error);
     return new Response(
       JSON.stringify({ error: "Unable to fetch announcements." }),
       { status: 500, headers: { "Content-Type": "application/json" } }

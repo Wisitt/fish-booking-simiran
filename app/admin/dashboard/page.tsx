@@ -1,7 +1,7 @@
 // app/admin/dashboard/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Chart as ChartJS,
@@ -110,7 +110,7 @@ const AdminDashboard = () => {
     }
   }, [router]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
       console.error("User ID not found");
@@ -126,7 +126,7 @@ const AdminDashboard = () => {
         body: JSON.stringify({
           userId,
           role: "admin",
-          costsPerWeek
+          costsPerWeek,
         }),
       });
 
@@ -138,8 +138,8 @@ const AdminDashboard = () => {
 
       const rawData = data.weeklyDataWithProfit || [];
 
-      // คำนวณ year, month จาก weekStart
-      const processedData: WeeklyProfitData[] = rawData.map(item => {
+      // Process data for year, month
+      const processedData: WeeklyProfitData[] = rawData.map((item) => {
         const d = new Date(item.weekStart);
         const year = d.getFullYear();
         const month = d.getMonth() + 1;
@@ -155,14 +155,13 @@ const AdminDashboard = () => {
         customerDistribution: data.customerDistribution || [],
         monthlyBreakdown: data.monthlyBreakdown || [],
       });
-
     } catch (error) {
+      console.error(error);
       setAnalysisData(null);
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [costsPerWeek]);
   if (!role) return null;
   if (loading) return <div className="flex justify-center items-center h-screen"><div className="text-center font-semibold text-gray-700">Loading...</div></div>;
   if (!analysisData) return <div className="flex justify-center items-center h-screen text-red-600 font-bold">Failed to load data. Please try again later.</div>;

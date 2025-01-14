@@ -1,7 +1,6 @@
 // app/api/bookings/[id]/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { getPreviousMondayWeek } from "@/app/lib/weekUtils";
 
 const prisma = new PrismaClient();
 

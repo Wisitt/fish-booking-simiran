@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaDownload, FaFilter, FaTable } from "react-icons/fa";
+import { FaDownload, FaTable } from "react-icons/fa";
 
 interface Week {
   weekNumber: number;
@@ -30,7 +30,7 @@ const SummaryTable = () => {
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<Week | null>(null);
-  const [mode, setMode] = useState<"all" | "select">("all");
+  const [mode] = useState<"all" | "select">("all");
 
   useEffect(() => {
     const fetchYears = async () => {
@@ -146,14 +146,7 @@ const SummaryTable = () => {
     fetchSummary();
   }, []);
 
-
-  const calculateISOWeekNumber = (date: Date): number => {
-    const tempDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    tempDate.setUTCDate(tempDate.getUTCDate() + 4 - (tempDate.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
-    return Math.ceil((((tempDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  };
-
+  
   const getWeekStartAndEndDates = (weekNumber: number, year: number) => {
     const startDate = new Date(Date.UTC(year, 0, 1 + (weekNumber - 1) * 7));
     const dayOffset = startDate.getUTCDay() === 0 ? -6 : 1 - startDate.getUTCDay();

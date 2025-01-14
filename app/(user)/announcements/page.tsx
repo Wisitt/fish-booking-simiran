@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Calendar, Search, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
 import { formatDate } from "@/app/lib/formatdate";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/ui/Modal";
 
@@ -30,7 +29,6 @@ const UserAnnouncements = () => {
     startDate: "",
     endDate: ""
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
@@ -46,19 +44,19 @@ const UserAnnouncements = () => {
       const data = await response.json();
       setCurrentAnnouncement(data);
     } catch (error) {
+      console.error(error);
     }
   };
 
   const fetchPriceHistory = async () => {
     try {
-      setIsLoading(true);
       const response = await fetch("/api/user/announcements/history");
       if (!response.ok) throw new Error("Failed to fetch price history");
       const data = await response.json();
       setPriceHistory(data);
     } catch (error) {
+      console.error(error);
     } finally {
-      setIsLoading(false);
     }
   };
 

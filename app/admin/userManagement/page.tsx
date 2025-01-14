@@ -28,7 +28,6 @@ const UsersPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -43,10 +42,8 @@ const UsersPage = () => {
       const response = await fetch("/api/admin/getUsers");
       const data: User[] = await response.json();
       setUsers(data);
-      setIsLoading(false);
     } catch {
       setErrorMessage("Failed to fetch users");
-      setIsLoading(false);
     }
   };
 
@@ -69,7 +66,8 @@ const UsersPage = () => {
   
       setUsers(users.filter(user => user.id !== userToDelete.id));
       setSuccessMessage("User deleted successfully!");
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       setErrorMessage("Failed to delete user. Please try again.");
     } finally {
       setIsDeleteDialogOpen(false);
@@ -98,6 +96,7 @@ const UsersPage = () => {
       setRole("user");
       fetchUsers();
     } catch (error) {
+      console.error(error);
       setErrorMessage((error as Error).message);
     }
   };
@@ -121,6 +120,7 @@ const UsersPage = () => {
       setNewPassword("");
       setSelectedUser(null);
     } catch (error) {
+      console.error(error);
       setErrorMessage((error as Error).message);
     }
   };
