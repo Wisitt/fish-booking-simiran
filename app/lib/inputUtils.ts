@@ -1,3 +1,4 @@
+//app/lib/formatdate.ts
 type SetFormData<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export function handleNumericInputChange<T extends { dailyQuantities: Record<string, number> }>(

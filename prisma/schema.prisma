@@ -29,16 +29,21 @@ model Booking {
   customerGroup   String
   customerName    String
   price           String
-  dailyQuantities Json     @default("{}")
   fishSize        String
   fishType        String
+  originalPrice   String?
+  approvedPrice   Decimal?
+  logPrices       Json?    @default("[]") // ค่าเริ่มต้นเป็น Array ว่าง
+  dailyQuantities Json     @default("{}")
+  priceHistory    Json?    @default("[]")
   createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   userId          Int
   weekNumber      Int      
-  originalPrice   String?
-  priceHistory    Json?    @default("[]")
   year            Int      
   user            User     @relation(fields: [userId], references: [id])
+  isApproved      Boolean  @default(false)
+  status          String   @default("รออนุมัติ")
 }
 
 model User {
@@ -66,4 +71,20 @@ model Announcement {
   endDate     DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model RejectedBooking {
+  id              Int      @id @unique
+  code            String
+  team            String
+  customerGroup   String
+  customerName    String
+  price           String
+  fishSize        String
+  fishType        String
+  dailyQuantities Json     @default("{}") // เก็บข้อมูลจำนวนปลาต่อวัน
+  weekNumber      Int
+  year            Int
+  status          String   @default("ถูกปฏิเสธ")
+  timestamp       DateTime
 }

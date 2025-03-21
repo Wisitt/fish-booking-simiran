@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"app/(user)/bookings/components/BookingForm.tsx -> ../../../../components/ui/CreatableSelectNoSSR":{"id":6843,"files":["static/chunks/9102.288b5f7e99bacd3e.js","static/chunks/6843.d83a76ecdd272c35.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{}"

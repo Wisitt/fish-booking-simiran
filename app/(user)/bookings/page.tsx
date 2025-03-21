@@ -1,4 +1,4 @@
-// app/bookings/page.tsx
+// app/(user)/bookings/page.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -24,8 +24,9 @@ interface Booking {
   userId: number;
   weekNumber: number; 
   year: number; 
+  status: string;
 }
-type TabKey = "current" | "previous" | "group1" | "group2";
+type TabKey = "current" | "previous"| "previousGroup2"| "group1" | "group2";
 
 export default function BookingPage() {
   const [bookingsCurrent, setBookingsCurrent] = useState<Booking[]>([]);
@@ -38,60 +39,151 @@ export default function BookingPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
 
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const firstInputRef = useRef<HTMLInputElement | null>(null);
 
-  // ดึง bookings ของ "สัปดาห์ปัจจุบัน" (monday-based)
+
+  // Generate summary for bookings
+  const generateBookingSummary = (bookings: Booking[]) => {
+    const summary: Record<string, { total: number; customers: Record<string, Record<string, number>> }> = {};
+
+    bookings.forEach((booking) => {
+      const { fishType, fishSize, customerName, dailyQuantities } = booking;
+
+      if (!summary[fishType]) {
+        summary[fishType] = { total: 0, customers: {} };
+      }
+
+      if (!summary[fishType].customers[customerName]) {
+        summary[fishType].customers[customerName] = {};
+      }
+
+      summary[fishType].customers[customerName][fishSize] =
+        (summary[fishType].customers[customerName][fishSize] || 0) +
+        Object.values(dailyQuantities).reduce((sum, qty) => sum + qty, 0);
+
+      summary[fishType].total += Object.values(dailyQuantities).reduce((sum, qty) => sum + qty, 0);
+    });
+
+    return summary;
+  };
+  
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await fetch("/api/bookings");
+        if (!res.ok) throw new Error("Failed to fetch bookings");
+        const data = await res.json();
+        setBookings(data);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+
+    fetchBookings();
+
+    // Polling every 10 seconds for real-time updates
+    const interval = setInterval(() => {
+      fetchBookings();
+    }, 10000);
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, []);
+  
+  // Fetch current week bookings
   async function fetchCurrentWeek(userId: string) {
-    const { year, weekNumber } = getMondayWeekAndYear(new Date());    
-    const url = `/api/bookings?year=${year}&weekNumber=${weekNumber}`;
+    const { year, weekNumber } = getMondayWeekAndYear(new Date());
+    const url = `/api/bookings?year=${year}&weekNumber=${weekNumber}&excludeGroup=กลุ่ม%202%20:%20ต่อราคา`;
     try {
       const res = await fetch(url, { headers: { "user-id": userId } });
       if (!res.ok) throw new Error("Failed to fetch current week bookings");
       const data = await res.json();
       setBookingsCurrent(data);
     } catch (error) {
-      console.error(error); 
+      console.error(error);
       toast.error("Error fetching current week bookings.");
     }
   }
-  
 
-  // ดึง bookings ของ "อาทิตย์ที่แล้ว" (monday-based)
+
+  // Fetch previous week bookings
   async function fetchPreviousWeek(userId: string) {
-    const { year, weekNumber } = getPreviousMondayWeek(new Date());  
-    const url = `/api/bookings?year=${year}&weekNumber=${weekNumber}`;
+
+    const { year, weekNumber } = getPreviousMondayWeek(new Date());
+    const group2Url = `/api/bookings?year=${year}&weekNumber=${weekNumber}&group=กลุ่ม%202%20:%20ต่อราคา`; // Fetch group 2 separately
+    const url = `/api/bookings?year=${year}&weekNumber=${weekNumber}&excludeGroup=${encodeURIComponent("กลุ่ม 2 : ต่อราคา")}`;
     try {
       const res = await fetch(url, { headers: { "user-id": userId } });
       if (!res.ok) throw new Error("Failed to fetch previous week bookings");
       const data = await res.json();
-      setBookingsPrevious(data);
+      setBookingsPrevious(data.filter((booking: { customerGroup: string; }) => booking.customerGroup !== "กลุ่ม 2 : ต่อราคา"));
+      setBookingsPreviousGroup2(data.filter((booking: { customerGroup: string; }) => booking.customerGroup === "กลุ่ม 2 : ต่อราคา"));
     } catch (error) {
-      console.error(error); 
+      console.error(error);
       toast.error("Error fetching previous week bookings.");
     }
   }
-  
-  
 
-  // เมื่อ component mount => ดึง userId จาก localStorage => fetch current + previous
+  const [bookingsPreviousGroup2, setBookingsPreviousGroup2] = useState<Booking[]>([]);
+
+
+  const copyAllEnabled = !bookingsPrevious.some(
+    (booking) => booking.customerGroup === "กลุ่ม 2 : ต่อราคา"
+  );
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      setCurrentUserId(Number(userId));
-      fetchCurrentWeek(userId);
-      fetchPreviousWeek(userId);
-    }
+    const checkAndFetchData = () => {
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        // Fetch current and previous week data
+        setCurrentUserId(Number(userId));
+        fetchCurrentWeek(userId);
+        fetchPreviousWeek(userId);
+      }
+    };
+  
+    // Check and update data every day at midnight
+    const now = new Date();
+    const timeUntilMidnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0,
+      0,
+      0
+    ).getTime() - now.getTime();
+  
+    checkAndFetchData(); // Initial fetch on mount
+    const timer = setTimeout(() => {
+      checkAndFetchData(); // Fetch new data when the date changes
+      setInterval(checkAndFetchData, 24 * 60 * 60 * 1000); // Repeat every 24 hours
+    }, timeUntilMidnight);
+  
+    return () => clearTimeout(timer); // Cleanup timer on unmount
   }, []);
+  
 
   
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchCode, activeTab]);
+  }, [searchCode, activeTab, bookingsCurrent]);
 
+  const summary =
+    activeTab === "current"
+      ? generateBookingSummary(bookingsCurrent)
+      : activeTab === "previous"
+      ? generateBookingSummary(bookingsPrevious)
+      : activeTab === "previousGroup2"
+      ? generateBookingSummary(bookingsPreviousGroup2)
+      : activeTab === "group1"
+      ? generateBookingSummary(bookingsCurrent.filter((b) => b.customerGroup === "กลุ่ม 1 : ไม่ต่อราคา"))
+      : generateBookingSummary(bookingsCurrent.filter((b) => b.customerGroup === "กลุ่ม 2 : ต่อราคา"));
+
+
+      
   const filteredBookings = (activeTab === "current"
     ? bookingsCurrent
     : activeTab === "previous"
@@ -249,11 +341,12 @@ export default function BookingPage() {
       <th className="py-2 px-3 font-medium text-gray-700 whitespace-nowrap">Daily Qty</th>
       <th className="py-2 px-3 font-medium text-gray-700 whitespace-nowrap">Year</th>
       <th className="py-2 px-3 font-medium text-gray-700 whitespace-nowrap">Week</th>
+      <th className="py-2 px-3 font-medium text-gray-700 whitespace-nowrap">Status</th>
       <th className="py-2 px-3 font-medium text-gray-700 text-center whitespace-nowrap">Actions</th>
     </tr>
   );
 
-  const TableRow = ({ booking, isPrevious, onCopy, onDelete }: { booking: Booking; isPrevious: boolean; onCopy: (booking: Booking) => void; onEdit: (booking: Booking) => void; onDelete: (id: number) => void }) => (
+  const TableRow = ({ booking, isPrevious, onCopy, onEdit,onDelete }: { booking: Booking; isPrevious: boolean; onCopy: (booking: Booking) => void; onEdit: (booking: Booking) => void; onDelete: (id: number) => void }) => (
     <tr className={`hover:${isPrevious ? 'bg-pink-50' : 'bg-gray-50'} text-center`}>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.code}</td>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.team}</td>
@@ -288,6 +381,7 @@ export default function BookingPage() {
       </td>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.year}</td>
       <td className="py-2 px-3 border whitespace-nowrap">{booking.weekNumber}</td>
+      <td className="py-2 px-3 border whitespace-nowrap">{booking.status}</td>
       <td className="py-2 px-3 border text-center whitespace-nowrap">
         {isPrevious ? (
           <Button
@@ -298,12 +392,11 @@ export default function BookingPage() {
           </Button>
         ) : (
           <div className="flex justify-center gap-2">
-            <Button
-                          onClick={() => handleEdit(booking)}
-                          variant="edit"
-            >
+          {(booking.status === "รออนุมัติ" || booking.status === "ถูกปฏิเสธ") && (
+            <Button onClick={() => onEdit(booking)} variant="edit">
               <FaEdit className="mr-1" /> Edit
             </Button>
+          )}
             <Button
               onClick={() => onDelete(booking.id)}
               className="bg-red-500 text-white hover:bg-red-600 text-xs"
@@ -374,6 +467,15 @@ export default function BookingPage() {
             Previous Week
           </button>
           <button
+            onClick={() => setActiveTab("previousGroup2")}
+            className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative
+              ${activeTab === "previous" 
+                ? "text-blue-600 border-b-2 border-blue-600" 
+                : "text-gray-500 hover:text-gray-700"}`}
+          >
+            PreviousGroup2 Week
+          </button>
+          <button
               onClick={() => setActiveTab("group1")}
               className={`px-6 py-3 text-sm font-medium transition-colors duration-200 relative ${
                 activeTab === "group1" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"
@@ -405,6 +507,36 @@ export default function BookingPage() {
               />
             </div>
             
+        {/* Summary Section */}
+        <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm mb-8 p-6">
+        <h2 className="text-lg font-bold text-gray-800">ข้อมูลสรุป</h2>
+        {Object.entries(summary).length > 0 ? (
+          Object.entries(summary).map(([fishType, details]) => (
+            <div key={fishType} className="mt-4 border-b border-gray-200 pb-4">
+              <h3 className="text-base font-semibold text-blue-700">{`ชนิดปลา: ${fishType}`}</h3>
+              <p className="text-sm text-gray-700">
+                <strong>รวมทั้งหมด:</strong> {details.total} ตัว
+              </p>
+              {Object.entries(details.customers).map(([customerName, fishSizes]) => (
+                <div key={customerName} className="mt-2">
+                  <p className="text-sm text-gray-700">
+                    <strong>ลูกค้า:</strong> {customerName}
+                  </p>
+                  {Object.entries(fishSizes).map(([fishSize, total]) => (
+                    <p key={fishSize} className="text-sm text-gray-700">
+                      <strong>ขนาด {fishSize}:</strong> {total} ตัว
+                    </p>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500">ไม่มีข้อมูลสรุป</p>
+        )}
+      </div>
+
+
             {/* Search Bar */}
             <div className="flex items-center space-x-2 max-w-sm mb-6">
               <div className="relative flex-1">
@@ -421,7 +553,7 @@ export default function BookingPage() {
           </>
         )}
 
-<div className="p-6 bg-gray-50 rounded-lg shadow-sm my-4">
+        <div className="p-6 bg-gray-50 rounded-lg shadow-sm my-4">
           <h2 className="text-lg font-semibold text-gray-700">Daily Totals</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-4">
             {Object.entries(dailyTotals).map(([day, total]) => (
@@ -440,7 +572,7 @@ export default function BookingPage() {
                 <TableHeader isPrevious={activeTab === "previous"} />
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {activeTab === "previous" && (
+                {activeTab === "previous" && copyAllEnabled && (
                   <tr className="bg-blue-50">
                     <td colSpan={8} className="py-3 px-4 text-center text-gray-700 font-medium">
                       Copy all previous week's bookings
@@ -462,7 +594,7 @@ export default function BookingPage() {
                       booking={booking}
                       isPrevious={activeTab === "previous"}
                       onCopy={copyToCurrentWeek}
-                      onEdit={(booking) => setEditingBooking(booking)}
+                      onEdit={(booking) => handleEdit(booking)}
                       onDelete={(id) => {
                         setDeleteId(id);
                         setIsDialogOpen(true);

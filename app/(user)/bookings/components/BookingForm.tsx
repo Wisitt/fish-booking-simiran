@@ -1,9 +1,9 @@
-// app/(user) /bookings/components/BookingForm.tsx
+// app/(user)/bookings/components/BookingForm.tsx
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getMondayWeekAndYear, getWeekDays } from "../../../lib/weekUtils";
+import { getMondayWeekAndYear, getNextWeekDays, getWeekDays } from "../../../lib/weekUtils";
 import { Button } from "@/components/ui/button";
 import { handleNumericInputChange } from "../../../lib/inputUtils";
 import dynamic from "next/dynamic";
@@ -48,6 +48,7 @@ interface Booking {
   weekNumber: number;
   userId: number;
   year: number;
+  status: string;
 }
 
 
@@ -65,7 +66,7 @@ export default function BookingForm({
   firstInputRef,
 }: Props) {
   const weekDays = useMemo(() => {
-    const allDays = getWeekDays();
+    const allDays = getNextWeekDays();
     return allDays.slice(0, 6);
   }, []);
 
@@ -83,6 +84,7 @@ export default function BookingForm({
     weekNumber: 0,
     userId: 0,
     year: 0,
+    status: "รออนุมัติ",
   });
 
   // ---------- DIALOG STATES ----------
@@ -122,7 +124,7 @@ export default function BookingForm({
         // Set filtered Customers and Team
         setTeams([{ value: data.team, label: data.team }]);
         setCustomerNames(
-          data.customers.map((customer: { name: string }) => ({
+          data.customers.map((customer: any) => ({
             value: customer.name,
             label: customer.name,
           }))
@@ -134,37 +136,6 @@ export default function BookingForm({
   
     fetchUserDetails();
   }, []);
-  
-  
-  
-
-  // useEffect(() => {
-  //   const fetchTeams = async () => {
-  //     try {
-  //       const res = await fetch("/api/common/teams");
-  //       if (!res.ok) throw new Error("Error fetching teams");
-  //       const data = await res.json();
-  //       setTeams(data.map((team: any) => ({ value: team.name, label: team.name })));
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   const fetchCustomerNames = async () => {
-  //     try {
-  //       const userId = localStorage.getItem("userId");
-  //       const res = await fetch(`/api/common/customers?userId=${userId}`); // ดึงลูกค้าของ user ที่ล็อกอิน
-  //       if (!res.ok) throw new Error("Error fetching customers");
-  //       const data = await res.json();
-  //       setCustomerNames(data.map((c: any) => ({ value: c.name, label: c.name })));
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchTeams();
-  //   fetchCustomerNames();
-  // }, []);
 
   useEffect(() => {
     if (editingBooking) {
@@ -182,6 +153,7 @@ export default function BookingForm({
         weekNumber: 0,
         userId: 0,
         year: 0,
+        status: "รออนุมัติ",
       });
     }
     firstInputRef.current?.focus();
@@ -225,13 +197,15 @@ export default function BookingForm({
       return;
     }
 
-    try {
+    try { 
       const { year, weekNumber } = getMondayWeekAndYear(new Date());
       const body = {
         ...formData,
         userId: Number(userId),
         year,
         weekNumber,
+        status: formData.customerGroup === "กลุ่ม 2 : ต่อราคา" ? "รออนุมัติ" : "อนุมัติแล้ว",
+        isApproved: formData.customerGroup === "กลุ่ม 2 : ต่อราคา" ? false : true,
       };
 
       const method = editingBooking ? "PUT" : "POST";
@@ -543,7 +517,15 @@ export default function BookingForm({
                   type="text"
                   name={`day-${day}`}
                   value={qty}
-                  onChange={(e) => handleNumericInputChange(e, setFormData)}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      dailyQuantities: {
+                        ...prev.dailyQuantities,
+                        [day]: Number(e.target.value),
+                      },
+                    }))
+                  }
                   className="w-full mt-2 p-2 border rounded focus:ring-2 focus:ring-blue-200"
                 />
               </div>

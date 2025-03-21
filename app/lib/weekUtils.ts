@@ -1,3 +1,5 @@
+//app/lib/weekUtils.ts
+
 import { format, addDays, startOfWeek } from "date-fns";
 
 /**
@@ -120,4 +122,19 @@ export function getWeekDays() {
     days.push(format(addDays(monday, i), "yyyy-MM-dd"));
   }
   return days;
+}
+
+
+export function getNextWeekDays(): string[] {
+  const today = new Date();
+  const nextMonday = new Date(today.setDate(today.getDate() + (8 - today.getDay()))); // วันจันทร์หน้า
+  const weekDays: string[] = [];
+
+  for (let i = 0; i < 6; i++) { // วันจันทร์ถึงเสาร์
+    const day = new Date(nextMonday);
+    day.setDate(nextMonday.getDate() + i);
+    weekDays.push(day.toISOString().split("T")[0]); // YYYY-MM-DD
+  }
+
+  return weekDays;
 }
