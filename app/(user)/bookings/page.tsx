@@ -10,7 +10,6 @@ import Pagination from "@/components/Pagination";
 import { getMondayWeekAndYear, getPreviousMondayWeek, shiftDailyQuantities } from "@/app/lib/weekUtils";
 import { SharedDialog } from "@/app/components/shared/dialog";
 import BookingForm from "./components/BookingForm";
-
 interface Booking {
   id: number;
   code: string;
